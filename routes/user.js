@@ -3,12 +3,37 @@ var router = express.Router();
 var mongoose = require('mongoose');
 
 var User = require('../models/user');
+var Company = require('../models/company');
+
+
+function companyExists(req, res, next) {
+    Company
+    .findById(req.body.company_id)
+    .then( result => {
+        next();
+    })
+    .catch(err => { 
+        res.status(404).json({
+            message: 'Cannot add user no company with id: ' + req.body.company_id,
+            error: err
+        });
+       
+    });
+}
 
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.post('/', function(req, res, next) {
+router.get('/', function(req, res, next) {
+    res.send('respond with a resource');
+});
+
+router.get('/', function(req, res, next) {
+    res.send('respond with a resource');
+});
+
+router.post('/', companyExists , function(req, res, next) {
   var user = new User({
     _id: mongoose.Types.ObjectId(),
     isAdmin: (req.body.isAdmin != undefined) ? req.body.isAdmin : false,
@@ -16,7 +41,8 @@ router.post('/', function(req, res, next) {
     name: req.body.name,
     email: req.body.email,
     username: req.body.username,
-    password: req.body.password
+    password: req.body.password,
+    company_id: req.body.company_id
 });
 
 user

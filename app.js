@@ -30,11 +30,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', indexRouter);
-app.use('/api/user', usersRouter);
 app.use('/api/company', companyRouter);
-app.use('/api/log', logRouter);
+app.use('/api/user', usersRouter);
+
+
+/* app.use('/api/log', logRouter);
 app.use('/api/device', deviceRouter);
-app.use('/api/sigfox', sigfoxRouter);
+app.use('/api/sigfox', sigfoxRouter); */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
