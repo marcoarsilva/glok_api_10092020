@@ -1,0 +1,103 @@
+{
+	"info": {
+		"_postman_id": "bcfc49ae-1d9e-42e2-a846-eab50a4b29c1",
+		"name": "Glok",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Companies",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Company Y\",\n\t\"email\": \"mail@test.com\",\n\t\"address\": \"addr\",\n\t\"phone\": \"0292929\",\n\t\"vat\": \"28947238\"\n}"
+				},
+				"url": {
+					"raw": "localhost:5555/api/company",
+					"host": [
+						"localhost"
+					],
+					"port": "5555",
+					"path": [
+						"api",
+						"company"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Company",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Company X\",\n\t\"email\": \"mail@test.com\",\n\t\"address\": \"addr\",\n\t\"phone\": \"0292929\",\n\t\"vat\": \"28947238\",\n\t\"areas\": [\"Area_x\"]\n}"
+				},
+				"url": {
+					"raw": "localhost:5555/api/company",
+					"host": [
+						"localhost"
+					],
+					"port": "5555",
+					"path": [
+						"api",
+						"company"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Company",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Company X\",\n\t\"email\": \"mail@test.com\",\n\t\"address\": \"ffff\",\n\t\"phone\": \"2389547\",\n\t\"vat\": \"123\",\n\t\"areas\": [\"Area_y\"]\n}"
+				},
+				"url": {
+					"raw": "localhost:5555/api/company/5ca22300a10d9f111c817ba6",
+					"host": [
+						"localhost"
+					],
+					"port": "5555",
+					"path": [
+						"api",
+						"company",
+						"5ca22300a10d9f111c817ba6"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
