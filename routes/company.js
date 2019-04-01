@@ -40,7 +40,7 @@ router.post('/', function(req, res, next) {
         address: req.body.address,
         phone: req.body.phone,
         vat: req.body.vat,
-        areas: req.body.areas,
+        areas: (req.body.areas != undefined) ? req.body.areas : [],
         creation_date: Date.now()
     });
 
