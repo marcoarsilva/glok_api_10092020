@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 
 var deviceSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
+    company: String,
+    device: String,
     lat: String,
     lng: String,
     bat: String,
