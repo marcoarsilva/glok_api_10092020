@@ -7,9 +7,6 @@
 	"item": [
 		{
 			"name": "Get All Companies",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [
@@ -22,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"name\": \"Company Y\",\n\t\"email\": \"mail@test.com\",\n\t\"address\": \"addr\",\n\t\"phone\": \"0292929\",\n\t\"vat\": \"28947238\"\n}"
+					"raw": ""
 				},
 				"url": {
 					"raw": "localhost:5555/api/company",
@@ -94,6 +91,106 @@
 						"api",
 						"company",
 						"5ca22300a10d9f111c817ba6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Devices",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:5555/api/device",
+					"host": [
+						"localhost"
+					],
+					"port": "5555",
+					"path": [
+						"api",
+						"device"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sigfox Entry",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"device\": \"1AF2CB\",\n\t\"payload\": \"lskjdf\",\n\t\"time\": 1239871238712,\n\t\"station\": \"112312\",\n\t\"lat\": \"51.3\",\n\t\"lng\": \"43.3\"\n}"
+				},
+				"url": {
+					"raw": "localhost:5555/api/log",
+					"host": [
+						"localhost"
+					],
+					"port": "5555",
+					"path": [
+						"api",
+						"log"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Logs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:5555/api/log",
+					"host": [
+						"localhost"
+					],
+					"port": "5555",
+					"path": [
+						"api",
+						"log"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Logs By Device",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:5555/api/log/1AF2CQ",
+					"host": [
+						"localhost"
+					],
+					"port": "5555",
+					"path": [
+						"api",
+						"log",
+						"1AF2CQ"
 					]
 				}
 			},

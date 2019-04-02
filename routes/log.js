@@ -50,6 +50,20 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/:device', function(req, res, next) {
+  Sigfox
+  .find({device: req.params.device})
+  .then(result => {
+      res.send(result);
+  })
+  .catch(err => {
+    res.status(500).json({
+        message: 'Server error',
+        error: err
+    });
+})
+});
+
 router.post('/',  function(req, res, next) {
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
