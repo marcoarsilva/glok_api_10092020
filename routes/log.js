@@ -48,6 +48,12 @@ router.get('/', function(req, res, next) {
   .then(entry => {
       res.send(entry);
   })
+  .catch(err => {
+    res.status(500).json({
+        message: 'Server error',
+        error: err
+    });
+  })
 });
 
 router.get('/:device', function(req, res, next) {
@@ -61,7 +67,7 @@ router.get('/:device', function(req, res, next) {
         message: 'Server error',
         error: err
     });
-})
+  })
 });
 
 router.post('/',  function(req, res, next) {

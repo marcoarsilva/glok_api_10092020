@@ -11,8 +11,8 @@ var usersRouter = require('./routes/user');
 var companyRouter = require('./routes/company');
 var logRouter = require('./routes/log');
 var deviceRouter = require('./routes/device');
-var sigfoxRouter = require('./routes/sigfox');
-var authRouter = require('./routes/auth')
+var authRouter = require('./routes/auth');
+var areaRouter = require('./routes/area');
 
 var app = express();
 
@@ -22,6 +22,16 @@ mongoose.connect('mongodb://localhost:27017/glok_test', {useNewUrlParser: true})
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+//CORS Middleware
+app.use(function (req, res, next) {
+  //Enabling CORS
+  res.header("Content-Type", "application/json");
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, contentType,Content-Type, Accept, Authorization");
+  next();
+});
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -34,6 +44,7 @@ app.use('/api/company', companyRouter);
 app.use('/api/user', usersRouter);
 app.use('/api/log', logRouter);
 app.use('/api/device', deviceRouter);
+app.use('/api/area', areaRouter);
 
 /* 
 app.use('/api/sigfox', sigfoxRouter); */
