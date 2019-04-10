@@ -22,15 +22,17 @@ function companyExists(req, res, next) {
 }
 
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
-
-router.get('/', function(req, res, next) {
-    res.send('respond with a resource');
-});
-
-router.get('/', function(req, res, next) {
-    res.send('respond with a resource');
+    User
+    .find({})
+    .then(users => {
+        res.send(users);
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'Server error',
+            error: err
+        });
+    })
 });
 
 router.post('/', companyExists , function(req, res, next) {
@@ -42,7 +44,7 @@ router.post('/', companyExists , function(req, res, next) {
     email: req.body.email,
     username: req.body.username,
     password: req.body.password,
-    company_id: req.body.company_id
+    company: req.body.company
 });
 
 user
@@ -63,5 +65,33 @@ user
     });
 });
 
+router.put('/:id', function(req, res, next) {
+    var newUser = new User({
+        isAdmin: (req.body.isAdmin != undefined) ? req.body.isAdmin : false,
+        isSuperAdmin: (req.body.isSuperAdmin != undefined) ? req.body.isSuperAdmin : false,
+        name: req.body.name,
+        email: req.body.email,
+        username: req.body.username,
+        password: req.body.password,
+        company: req.body.company
+    });
 
+
+    User
+        .findOneAndUpdate(req.params.id, newUser)
+        .then(result => {
+            console.log(result);
+            res.status(201).json({
+                message: 'Successfully updated user',
+                area_created: newUser
+            });
+        })
+        .catch(err => { 
+            console.log(err);
+            res.status(500).json({
+                message: 'Couldn\'t create company',
+                error: err
+            });
+        });    
+});
 module.exports = router;
