@@ -10,7 +10,7 @@ function addToDeviceList(company, device, lat, lng, bat, temp, time){
   .then(result => {
     if(result != ""){
       
-      Device.findOneAndUpdate({device: device}, {lat: lat, lng: lng, bat: bat, temp: temp})
+      Device.findOneAndUpdate({device: device}, {lat: lat, lng: lng, bat: bat, temp: temp, last_seen: Date.now()})
       .then(result => {
         console.log(result)
       })
@@ -24,7 +24,8 @@ function addToDeviceList(company, device, lat, lng, bat, temp, time){
         lat: lat, 
         lng: lng, 
         bat: bat, 
-        temp: temp
+        temp: temp,
+        last_seen: Date.now()
       });
 
       newDevice.save().then(result => {
