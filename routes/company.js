@@ -74,7 +74,7 @@ router.put('/:id', function(req, res, next) {
 
 
     Company
-        .findOneAndUpdate(req.params.id, newCompany)
+        .findOneAndUpdate({_id: req.params.id}, newCompany)
         .then(result => {
             console.log(result);
             res.status(201).json({

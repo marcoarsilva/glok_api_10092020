@@ -78,7 +78,7 @@ router.put('/:id', function(req, res, next) {
 
 
     User
-        .findOneAndUpdate(req.params.id, newUser)
+        .findOneAndUpdate({_id: req.params.id}, newUser)
         .then(result => {
             console.log(result);
             res.status(201).json({

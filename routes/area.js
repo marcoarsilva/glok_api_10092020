@@ -67,7 +67,7 @@ router.put('/:id', function(req, res, next) {
 
 
     Area
-        .findOneAndUpdate(req.params.id, newArea)
+        .findOneAndUpdate({_id:req.params.id}, newArea)
         .then(result => {
             console.log(result);
             res.status(201).json({
