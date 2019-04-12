@@ -7,7 +7,6 @@ var methods = require("../methods")
 var Area = require('../models/area');
 
 router.get('/', methods.ensureToken,function(req, res, next) {
-    if(!req.payload.user.isSuperAdmin){
         Area
             .find({company: req.payload.user.company})
             .then(areas => {
@@ -19,19 +18,6 @@ router.get('/', methods.ensureToken,function(req, res, next) {
                     error: err
                 });
             })
-    } else {
-        Area
-        .find({})
-        .then(areas => {
-            res.send(areas);
-        })
-        .catch(err => {
-            res.status(500).json({
-                message: 'Server error',
-                error: err
-            });
-        })
-    }
 });
 
 router.get('/:id', methods.ensureToken,function(req, res, next) {
