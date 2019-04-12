@@ -1,11 +1,26 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var methods = require("../methods")
+
 
 var Area = require('../models/area');
 
-router.get('/', function(req, res, next) {
-    Area
+router.get('/', methods.ensureToken,function(req, res, next) {
+    if(!req.payload.user.isSuperAdmin){
+        Area
+            .find({company: req.payload.user.company})
+            .then(areas => {
+                res.send(areas);
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: 'Server error',
+                    error: err
+                });
+            })
+    } else {
+        Area
         .find({})
         .then(areas => {
             res.send(areas);
@@ -16,9 +31,10 @@ router.get('/', function(req, res, next) {
                 error: err
             });
         })
+    }
 });
 
-router.get('/:id', function(req, res, next) {
+router.get('/:id', methods.ensureToken,function(req, res, next) {
     Area
         .findById(req.params.id)
         .then(area => {
@@ -32,10 +48,11 @@ router.get('/:id', function(req, res, next) {
         })
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', methods.ensureToken,function(req, res, next) {
     console.log(req);
     var area = new Area({
         _id: mongoose.Types.ObjectId(),
+        company: req.payload.user.company,
         name: req.body.name,
         points: req.body.points
     });
@@ -59,7 +76,7 @@ router.post('/', function(req, res, next) {
         });
 });
  
-router.put('/:id', function(req, res, next) {
+router.put('/:id', methods.ensureToken,function(req, res, next) {
     var newArea = new Area({
         name: req.body.name,
         points: req.body.points

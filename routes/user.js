@@ -84,7 +84,7 @@ router.post('/', methods.ensureToken , companyExists , function(req, res, next) 
                     error: err
             });
         });
-    } else {    
+    } else if(req.payload.user.isAdmin){    
         var user = new User({
             _id: mongoose.Types.ObjectId(),
             isAdmin: false,
@@ -93,7 +93,7 @@ router.post('/', methods.ensureToken , companyExists , function(req, res, next) 
             email: req.body.email,
             username: req.body.username,
             password: req.body.password,
-            company: req.body.company
+            company: req.payload.user.company
         });
         
         user
