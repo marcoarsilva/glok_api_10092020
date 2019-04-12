@@ -59,7 +59,6 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
 });
 
 router.get('/:device', methods.ensureToken ,function(req, res, next) {
-
   Sigfox
   .find({device: req.params.device})
   .then(result => {
@@ -70,6 +69,30 @@ router.get('/:device', methods.ensureToken ,function(req, res, next) {
         message: 'Server error',
         error: err
     });
+  })
+});
+router.get('/:device/:limit', methods.ensureToken ,function(req, res, next) {
+  Sigfox
+  .find({device: req.params.device})
+  .limit(parseInt(req.params.limit))
+  .then(result => {
+      res.send(result);
+  })
+  .catch(err => {
+    res.status(500).json({
+        message: 'Server error',
+        error: err
+    });
+  })
+});
+router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, next) {
+  const date1 = new Date(req.params.date1);
+  const date2 = new Date(req.params.date2);
+
+  console.log(date1 + "!" + date2);
+
+  Sigfox.find({device: req.params.device}).then(result=> {
+    console.log(result);
   })
 });
 
