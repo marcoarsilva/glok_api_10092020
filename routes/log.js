@@ -91,7 +91,7 @@ router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, nex
 
   console.log(date1 + "!" + date2);
 
-  Sigfox.find({device: req.params.device}).then(result=> {
+  Sigfox.find({"timestamp": {"$gte": new ISODate(date1), "$lt": date2}}).then(result=> {
     console.log(result);
   })
 });
