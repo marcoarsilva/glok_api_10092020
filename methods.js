@@ -6,7 +6,7 @@ module.exports.ensureToken = function(req, res, next) {
         const bearer = bearerHeader.split(" ")
         const bearerToken = bearer[1]
   
-        jwt.verify(bearerToken, 'secretkey', (err, result) => {
+        jwt.verify(bearerToken, '08dummIO@', (err, result) => {
             if(err) { res.sendStatus(403) }
             else{ 
                 req.payload = result;
