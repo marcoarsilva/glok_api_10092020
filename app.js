@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var jwt = require('jsonwebtoken');
 var mongoose = require('mongoose');
+var methods = require("methods")
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/user');
@@ -45,6 +46,7 @@ app.use('/api/user', usersRouter);
 app.use('/api/log', logRouter);
 app.use('/api/device', deviceRouter);
 app.use('/api/area', areaRouter);
+app.use('/api/auth', authRouter);
 
 /* 
 app.use('/api/sigfox', sigfoxRouter); */

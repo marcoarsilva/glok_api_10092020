@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var methods = require("../methods");
 
 var Sigfox = require('../models/sigfox');
 var Device = require('../models/device');
@@ -43,7 +44,7 @@ function addToDeviceList(company, device, lat, lng, bat, temp, time){
   // })
 }
 
-router.get('/', function(req, res, next) {
+router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({})
   .then(entry => {
@@ -57,7 +58,8 @@ router.get('/', function(req, res, next) {
   })
 });
 
-router.get('/:device', function(req, res, next) {
+router.get('/:device', methods.ensureToken ,function(req, res, next) {
+
   Sigfox
   .find({device: req.params.device})
   .then(result => {
@@ -71,7 +73,7 @@ router.get('/:device', function(req, res, next) {
   })
 });
 
-router.post('/',  function(req, res, next) {
+router.post('/', methods.ensureToken , function(req, res, next) {
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
     device: req.body.device,
