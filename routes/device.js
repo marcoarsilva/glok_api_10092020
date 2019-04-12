@@ -34,21 +34,51 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
 });
 
 router.put('/:id',methods.ensureToken ,function(req, res, next) {
-    var newDevice = new Device({
-        name: req.body.name,
-        mot: req.body.mot,
-        notes: req.body.notes
-      });
-
-    Device
-        .findOneAndUpdate({_id: req.params.id}, newDevice)
-        .then(result => {
-            console.log(result);
-            res.status(201).json({
-                message: 'Successfully updated device',
-                device_updated: newDevice
-            });
-        })    
+    if(!req.payload.user.isSuperAdmin){
+        var newDevice = new Device({
+            name: req.body.name,
+            mot: req.body.mot,
+            notes: req.body.notes
+          });
+    
+        Device
+            .findOneAndUpdate({_id: req.params.id}, newDevice)
+            .then(result => {
+                console.log(result);
+                res.status(201).json({
+                    message: 'Successfully updated device',
+                    device_updated: newDevice
+                });
+        }).catch(err => {
+                res.status(500).json({
+                    message: 'Server error',
+                    error: err
+                });
+            })    
+    } else {
+        var newDevice = new Device({
+            name: req.body.name,
+            mot: req.body.mot,
+            notes: req.body.notes,
+            company: req.body.company
+          });
+    
+        Device
+            .findOneAndUpdate({_id: req.params.id}, newDevice)
+            .then(result => {
+                console.log(result);
+                res.status(201).json({
+                    message: 'Successfully updated device',
+                    device_updated: newDevice
+                });
+            }).catch(err => {
+                res.status(500).json({
+                    message: 'Server error',
+                    error: err
+                });
+            })   
+    }
+ 
 });
 
 module.exports = router;
