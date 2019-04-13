@@ -18,7 +18,7 @@ var areaRouter = require('./routes/area');
 var app = express();
 
 //connect to database
-mongoose.connect('mongodb://localhost:27017/glok_test', {useNewUrlParser: true});
+mongoose.connect('mongodb://root:08dummIO@77.68.10.143:37017/glok?authSource=admin', {useNewUrlParser: true});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
