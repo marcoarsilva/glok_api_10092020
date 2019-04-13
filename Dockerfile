@@ -2,5 +2,5 @@ FROM node:latest as node
 WORKDIR /
 COPY . .
 RUN npm install
-EXPOSE 3000
+EXPOSE 5555
 CMD [ "npm", "start" ]

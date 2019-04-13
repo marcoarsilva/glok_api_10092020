@@ -1,0 +1,21 @@
+{"_id":{"$oid":"5caf2433cbbbb5efed843f5b"},"device":"1AF10D","lat":"52.29217666666667","lng":"0.38753","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:51:28.694Z"},"__v":0,"name":"tesets","company":"5caff933b6223d1633e2e198"}
+{"_id":{"$oid":"5caf244ccbbbb5efed843f5d"},"device":"CDBA3F","lat":"52.530705","lng":"-1.390815","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:51:58.833Z"},"__v":0,"company":"5caff933b6223d1633e2e198"}
+{"_id":{"$oid":"5caf248acbbbb5efed843f60"},"device":"CDBA99","lat":"48.98408833333333","lng":"2.52068","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:52:04.730Z"},"__v":0,"company":"5caff933b6223d1633e2e198"}
+{"_id":{"$oid":"5caf24a7cbbbb5efed843f62"},"device":"CDBAAF","lat":"52.291175","lng":"0.3887366666666667","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:42:04.753Z"},"__v":0,"company":"5caff933b6223d1633e2e198"}
+{"_id":{"$oid":"5caf24b8cbbbb5efed843f64"},"device":"1AF227","lat":"51.40535","lng":"9.74751","bat":"0","temp":"0","last_seen":{"$date":"2019-04-11T16:26:17.552Z"},"__v":0,"company":"5caff933b6223d1633e2e198"}
+{"_id":{"$oid":"5caf24c5cbbbb5efed843f66"},"device":"1AF1D9","lat":"51.499493333333334","lng":"0.051741666666666665","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:43:05.897Z"},"__v":0}
+{"_id":{"$oid":"5caf24c6cbbbb5efed843f68"},"device":"1AF0FA","lat":"51.528075","lng":"0.12567833333333334","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:43:01.615Z"},"__v":0}
+{"_id":{"$oid":"5caf24fbcbbbb5efed843f6a"},"device":"CDBA42","lat":"51.34314833333333","lng":"1.3182833333333335","bat":"0","temp":"0","last_seen":{"$date":"2019-04-11T19:04:05.081Z"},"__v":0}
+{"_id":{"$oid":"5caf2578cbbbb5efed843f6c"},"device":"20A691","lat":"51.18519833333333","lng":"0.39127833333333334","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:45:58.724Z"},"__v":0}
+{"_id":{"$oid":"5caf25a8cbbbb5efed843f6e"},"device":"1AF11E","lat":"51.10447333333333","lng":"-1.2710366666666666","bat":"0","temp":"0","last_seen":{"$date":"2019-04-11T18:45:34.581Z"},"__v":0}
+{"_id":{"$oid":"5caf25d2cbbbb5efed843f70"},"device":"1AF124","lat":"51.52805166666667","lng":"0.125395","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:47:34.999Z"},"__v":0}
+{"_id":{"$oid":"5caf25f0cbbbb5efed843f72"},"device":"1AF1FB","lat":"51.528056666666664","lng":"0.12549166666666667","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:43:49.480Z"},"__v":0}
+{"_id":{"$oid":"5caf25f0cbbbb5efed843f74"},"device":"20A6A2","lat":"51.51129666666667","lng":"-0.3943066666666667","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:48:02.247Z"},"__v":0}
+{"_id":{"$oid":"5caf25f0cbbbb5efed843f76"},"device":"1AF21E","lat":"51.48585833333333","lng":"0.239835","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:47:58.877Z"},"__v":0}
+{"_id":{"$oid":"5caf264bcbbbb5efed843f78"},"device":"1AF105","lat":"51.527935","lng":"0.12604","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:49:36.493Z"},"__v":0}
+{"_id":{"$oid":"5caf2663cbbbb5efed843f7a"},"device":"1AF125","lat":"52.294669999999996","lng":"0.3860383333333333","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:49:35.172Z"},"__v":0}
+{"_id":{"$oid":"5caf26b3cbbbb5efed843f7c"},"device":"1AF122","lat":"51.49975","lng":"0.05256","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:51:07.699Z"},"__v":0}
+{"_id":{"$oid":"5caf41ed413644f6518d9a9e"},"device":"20A697","lat":"53.463125","lng":"-2.8684333333333334","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:45:04.524Z"},"__v":0,"mot":{"$date":"2019-04-29T23:00:00.000Z"},"name":"1AF10D","notes":"Test"}
+{"_id":{"$oid":"5caf6803413644f6518d9ae2"},"device":"CDBB1E","lat":"51.078615","lng":"1.0121333333333333","bat":"0","temp":"0","last_seen":{"$date":"2019-04-11T16:14:59.185Z"},"__v":0}
+{"_id":{"$oid":"5cafae77413644f6518d9c60"},"device":"1AF11D","lat":"52.555463333333336","lng":"0.38198333333333334","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T00:24:36.585Z"},"__v":0,"mot":{"$date":"2019-04-29T23:00:00.000Z"},"name":"Teste","notes":"Em testes"}
+{"_id":{"$oid":"5cafea1c413644f6518d9da4"},"device":"20A695","lat":"52.5704","lng":"-1.1923716666666666","bat":"0","temp":"0","last_seen":{"$date":"2019-04-12T01:41:58.421Z"},"__v":0}
