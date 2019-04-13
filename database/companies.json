@@ -1,0 +1,2 @@
+{"_id":{"$oid":"5caf2459cbbbb5efed843f5e"},"areas":[""],"name":"Jack Richards \u0026 Son Ltd","email":"mail","address":"2 Garrood Drive, Industrial Estate,   Fakenham,   Norfolk  , NR21 8NN","phone":"01328863111","vat":"3454","creation_date":{"$date":"2019-04-11T11:26:17.872Z"},"__v":0}
+{"_id":{"$oid":"5caff933b6223d1633e2e198"},"areas":[""],"name":"Glok","email":"mail","address":"addr","phone":"123","vat":"123","creation_date":{"$date":"2019-04-12T02:34:27.466Z"},"__v":0}
