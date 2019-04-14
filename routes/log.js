@@ -40,7 +40,7 @@ function addToDeviceList(company, device, lat, lng, bat, temp, time){
 router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({})
-  .sort({time:-1})
+  .sort({_id:-1})
   .then(entry => {
       res.send(entry);
   })
@@ -55,7 +55,7 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
 router.get('/:device', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({device: req.params.device})
-  .sort({time:-1})
+  .sort({_id:-1})
   .then(result => {
       res.send(result);
   })
@@ -69,7 +69,7 @@ router.get('/:device', methods.ensureToken ,function(req, res, next) {
 router.get('/:device/:limit', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({device: req.params.device})
-  .sort({time:-1})
+  .sort({_id:-1})
   .limit(parseInt(req.params.limit))
   .then(result => {
       res.send(result);
