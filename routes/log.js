@@ -10,7 +10,6 @@ function addToDeviceList(company, device, lat, lng, bat, temp, time){
   Device.find({device: device})
   .then(result => {
     if(result != ""){
-      
       Device.findOneAndUpdate({device: device}, {lat: lat, lng: lng, bat: bat, temp: temp, last_seen: Date.now()})
       .then(result => {
         console.log(result)
@@ -36,17 +35,12 @@ function addToDeviceList(company, device, lat, lng, bat, temp, time){
  
   })
   .catch(err =>{console.log(err)});
-
-
-
-  // device.save().then( result => {
-  //   console.log(result);
-  // })
 }
 
 router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({})
+  .sort({time:-1})
   .then(entry => {
       res.send(entry);
   })
@@ -61,6 +55,7 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
 router.get('/:device', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({device: req.params.device})
+  .sort({time:-1})
   .then(result => {
       res.send(result);
   })
@@ -74,6 +69,7 @@ router.get('/:device', methods.ensureToken ,function(req, res, next) {
 router.get('/:device/:limit', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({device: req.params.device})
+  .sort({time:-1})
   .limit(parseInt(req.params.limit))
   .then(result => {
       res.send(result);
@@ -101,7 +97,7 @@ router.post('/', function(req, res, next) {
     _id: mongoose.Types.ObjectId(),
     device: req.body.device,
     payload: req.body.payload,
-    time: req.body.time,
+    time: Date.now(),
     lat: req.body.lat,
     lng: req.body.lng
   });
