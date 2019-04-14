@@ -96,7 +96,7 @@ router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, nex
   })
 });
 
-router.post('/', methods.ensureToken , function(req, res, next) {
+router.post('/', function(req, res, next) {
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
     device: req.body.device,
