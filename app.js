@@ -20,7 +20,7 @@ var areaRouter = require('./routes/area');
 var app = express();
 
 //connect to database
-mongoose.connect('mongodb://root:08dummIO@77.68.10.143:37017/glok?authSource=admin', {useNewUrlParser: true});
+mongoose.connect('mongodb://root:08dummIO@77.68.10.143:37017/glok?authSource=admin?replicaSet=rslocal01', {useNewUrlParser: true});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,6 +29,8 @@ app.set('view engine', 'pug');
 //CORS Middleware
 app.use(function (req, res, next) {
   //Enabling CORS
+
+  res.header("Content-Type", "application/json");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT, DELETE");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, contentType,Content-Type, Accept, Authorization");
@@ -41,7 +43,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/company', companyRouter);
 app.use('/api/user', usersRouter);
 app.use('/api/log', logRouter);

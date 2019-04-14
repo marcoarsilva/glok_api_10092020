@@ -14,7 +14,6 @@ router.post('/' ,function(req, res, next) {
   User
       .findOne({username: req.body.username})
       .then(result => {
-        console.log
         if(result.isSuperAdmin)
           permisson = "Root"
         else if(result.isAdmin)
@@ -41,6 +40,7 @@ router.post('/' ,function(req, res, next) {
       .catch(err => { 
           console.log(err);
       });
+
 });
 
 module.exports = router;
