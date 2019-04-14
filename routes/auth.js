@@ -14,12 +14,21 @@ router.post('/' ,function(req, res, next) {
   User
       .findOne({username: req.body.username})
       .then(result => {
-          if(p_username === result.username && p_password === result.password){
+        console.log
+        if(result.isSuperAdmin)
+          permisson = "Root"
+        else if(result.isAdmin)
+         permisson = "Admin"
+        else 
+          permisson = "User"
+
+        if(p_username === result.username && p_password === result.password){
             jwt.sign({user: result}, '08dummIO@',(err, token) => {
                 res.send({
                   ok: true,
                   message: "Login successful",
-                  token: token
+                  token: token,
+                  permisson: permisson
                 })
               })
            }else {
