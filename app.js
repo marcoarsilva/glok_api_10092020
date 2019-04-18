@@ -3,7 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var jwt = require('jsonwebtoken');
 var mongoose = require('mongoose');
 var methods = require("methods");
 var swaggerUi = require('swagger-ui-express');
@@ -16,11 +15,12 @@ var logRouter = require('./routes/log');
 var deviceRouter = require('./routes/device');
 var authRouter = require('./routes/auth');
 var areaRouter = require('./routes/area');
+var historyRouter = require('./routes/history');
 
 var app = express();
 
 //connect to database
-mongoose.connect('mongodb://root:08dummIO@77.68.10.143:37017/glok?authSource=admin?replicaSet=rslocal01', {useNewUrlParser: true});
+mongoose.connect('mongodb://localhost:27017/glok', {useNewUrlParser: true});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,7 +29,6 @@ app.set('view engine', 'pug');
 //CORS Middleware
 app.use(function (req, res, next) {
   //Enabling CORS
-
   res.header("Content-Type", "application/json");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT, DELETE");
@@ -46,12 +45,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/company', companyRouter);
 app.use('/api/user', usersRouter);
 app.use('/api/log', logRouter);
+app.use('/api/areaLog', historyRouter );
 app.use('/api/device', deviceRouter);
 app.use('/api/area', areaRouter);
 app.use('/api/auth', authRouter);
 
-/* 
-app.use('/api/sigfox', sigfoxRouter); */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

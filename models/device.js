@@ -15,7 +15,7 @@ var deviceSchema = mongoose.Schema({
     notifications:{
         downFor1Week: mongoose.Schema.Types.Boolean,
         sameLocation1Week: mongoose.Schema.Types.Boolean,
-        inGeofence: mongoose.Schema.Types.Boolean
+        noSpeed: mongoose.Schema.Types.Boolean
     }
 });
 
