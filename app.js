@@ -20,7 +20,7 @@ var historyRouter = require('./routes/history');
 var app = express();
 
 //connect to database
-mongoose.connect('mongodb://localhost:27017/glok', {useNewUrlParser: true});
+mongoose.connect('mongodb://admin:08dummIO@77.68.86.48:47017/glok?authSource=admin', {useNewUrlParser: true});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
