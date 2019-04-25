@@ -92,6 +92,22 @@ router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, nex
   })
 });
 
+router.delete('/:id', methods.ensureToken ,function(req, res, next) {
+  Sigfox
+  .deleteById(req.params.id)
+  .sort({_id:-1})
+  .limit(parseInt(req.params.limit))
+  .then(result => {
+      res.send(result);
+  })
+  .catch(err => {
+    res.status(500).json({
+        message: 'Server error',
+        error: err
+    });
+  })
+});
+
 router.post('/', function(req, res, next) {
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),

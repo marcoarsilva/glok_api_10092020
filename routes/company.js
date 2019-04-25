@@ -42,6 +42,23 @@ router.get('/:id', methods.ensureToken ,function(req, res, next) {
 
 });
 
+router.delete('/:id', methods.ensureToken ,function(req, res, next) {
+    if(req.payload.user.isSuperAdmin){
+        Company
+        .deleteById(req.params.id)
+        .then(company => {
+            res.send(company);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'Couldn\'t delete company with id: ' + req.params.id,
+                error: err
+            });
+        })
+    }
+
+});
+
 router.post('/', methods.ensureToken,function(req, res, next) {
     if(req.payload.user.isSuperAdmin){
         var company = new Company({

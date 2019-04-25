@@ -34,6 +34,20 @@ router.get('/:id', methods.ensureToken,function(req, res, next) {
         })
 });
 
+router.delete('/:id', methods.ensureToken,function(req, res, next) {
+    Area
+        .deleteById(req.params.id)
+        .then(area => {
+            res.send(area);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'Couldn\'t delete area with id: ' + req.params.id,
+                error: err
+            });
+        })
+});
+
 router.post('/', methods.ensureToken,function(req, res, next) {
     console.log(req);
     var area = new Area({

@@ -144,4 +144,22 @@ router.put('/:id', methods.ensureToken,function(req, res, next) {
         });    
 });
 
+router.delete('/:id', methods.ensureToken,function(req, res, next) {
+    User
+        .deleteById(req.params.id)
+        .then(result => {
+            console.log(result);
+            res.status(201).json({
+                message: 'Successfully deleted user',
+            });
+        })
+        .catch(err => { 
+            console.log(err);
+            res.status(500).json({
+                message: 'Couldn\'t delete user',
+                error: err
+            });
+        });    
+});
+
 module.exports = router;

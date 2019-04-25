@@ -26,6 +26,22 @@ router.get('/:device' , function(req, res, next) {
         })
 });
 
+router.delete('/:id' , function(req, res, next) {
+    console.log(req.params.device);
+    History
+        .deleteById(req.params._id)
+        .sort({_id:-1})  
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+
 router.post('/' , function(req, res, next) {
     console.log(req.params.device);
 
