@@ -33,6 +33,34 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
   }
 });
 
+router.delete('/:id', methods.ensureToken ,function(req, res, next) {
+    if(!req.payload.user.isSuperAdmin){
+      Device
+      .deleteById(req.params.id)
+      .then(device => {
+          res.send(device);
+      })
+      .catch(err => {
+          res.status(500).json({
+              message: 'Server error',
+              error: err
+          });
+      })   
+    } else {
+      Device
+      .delete({})
+      .then(device => {
+          res.send(device);
+      })
+      .catch(err => {
+          res.status(500).json({
+              message: 'Server error',
+              error: err
+          });
+      })   
+    }
+  });
+
 router.put('/:id',methods.ensureToken ,function(req, res, next) {
     if(!req.payload.user.isSuperAdmin){
         var newDevice = new Device({
