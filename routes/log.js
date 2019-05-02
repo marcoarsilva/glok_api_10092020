@@ -6,7 +6,41 @@ var methods = require("../methods");
 var Sigfox = require('../models/sigfox');
 var Device = require('../models/device');
 
-function addToDeviceList(company, device, lat, lng, bat, temp, time){
+function getBinaryFrame(payload) {
+  var bytes = payload.match(/.{1,2}/g);
+  var binaryString = '';
+  bytes.forEach(function (byte) {
+    binaryString += getBinaryFromHex(byte);
+
+  });
+  if (!binaryString.match(/^([0-9]*)$/)) {
+    return null;
+  }
+  return binaryString;
+  
+}
+function getBinaryFromHex(byte) {
+var num = Number(parseInt(byte, 16));
+if (isNaN(num)) {
+  return null;
+}
+var binary = num.toString(2);
+
+//Fill the byte with zeros
+while (binary.length < 8) {
+  binary = '0' + binary;
+}
+
+return binary;
+}
+function getDecimalCoord(sigfoxFrame) {
+var degrees = Math.floor(sigfoxFrame);
+var minutes = sigfoxFrame % 1 / 60 * 100;
+minutes = Math.round(minutes * 10000) / 10000;
+return degrees + minutes;
+
+}
+function addToDeviceList(device, lat, lng, bat, temp){
   Device.find({device: device})
   .then(result => {
     if(result != ""){
@@ -35,11 +69,6 @@ function addToDeviceList(company, device, lat, lng, bat, temp, time){
   .catch(err =>{console.log(err)});
 }
 
-function getBatFromPayload(payload) {}
-function getTempFromPayload(payload) {}
-function getLatFromPayload(payload) {}
-function getLngFromPayload(payload) {}
-
 router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({})
@@ -54,7 +83,6 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
     });
   })
 });
-
 router.get('/:device', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({device: req.params.device})
@@ -116,7 +144,9 @@ router.post('/', function(req, res, next) {
     payload: req.body.payload,
     time: Date.now(),
     lat: req.body.lat,
-    lng: req.body.lng
+    lng: req.body.lng,
+    battery: req.body.battery,
+    temp:req.body.temp,
   });
 
   newEntry
@@ -128,7 +158,14 @@ router.post('/', function(req, res, next) {
           company_created: newEntry
       });
 
-      addToDeviceList("company",req.body.device,req.body.lat, req.body.lng, getBatFromPayload(req.body.payload), getTempFromPayload(req.body.payload),req.body.time);
+      var framePattern = /(.{1})(.{31})(.{1})(.{31})(.{2})(.{2})(.{4})(.{4})(.{4})(.{8})(.{8})/;
+      var binaryFrame = getBinaryFrame(req.body.payload);
+      var frame = framePattern.exec(binaryFrame);
+    
+      var lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
+      var lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
+
+      addToDeviceList(req.body.device, lat, lng, req.body.battery, req.body.temp, req.body.time);
     })
     .catch(err => { 
       console.log(err);
