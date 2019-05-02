@@ -96,7 +96,7 @@ router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, nex
 });
 router.delete('/:id', methods.ensureToken ,function(req, res, next) {
   Sigfox
-  .deleteById(req.params.id)
+  .findByIdAndRemove(req.params.id)
   .sort({_id:-1})
   .limit(parseInt(req.params.limit))
   .then(result => {

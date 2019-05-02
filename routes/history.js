@@ -29,7 +29,7 @@ router.get('/:device' , function(req, res, next) {
 router.delete('/:id' , function(req, res, next) {
     console.log(req.params.device);
     History
-        .deleteById(req.params._id)
+        .findByIdAndRemove(req.params._id)
         .sort({_id:-1})  
         .then(result => {
             res.send(result);

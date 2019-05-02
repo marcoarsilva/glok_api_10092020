@@ -45,7 +45,7 @@ router.get('/:id', methods.ensureToken ,function(req, res, next) {
 router.delete('/:id', methods.ensureToken ,function(req, res, next) {
     if(req.payload.user.isSuperAdmin){
         Company
-        .deleteById(req.params.id)
+        .findByIdAndRemove(req.params.id)
         .then(company => {
             res.send(company);
         })
