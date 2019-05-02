@@ -16,8 +16,6 @@ function addToDeviceList(company, device, lat, lng, bat, temp, time){
       })
       .catch(err => console.log(err))
     } else {
-      console.log("create new");
-
       var newDevice = new Device({
         _id: mongoose.Types.ObjectId(),
         device: device,
@@ -36,6 +34,11 @@ function addToDeviceList(company, device, lat, lng, bat, temp, time){
   })
   .catch(err =>{console.log(err)});
 }
+
+function getBatFromPayload(payload) {}
+function getTempFromPayload(payload) {}
+function getLatFromPayload(payload) {}
+function getLngFromPayload(payload) {}
 
 router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox
@@ -91,7 +94,6 @@ router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, nex
     console.log(result);
   })
 });
-
 router.delete('/:id', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .deleteById(req.params.id)
@@ -107,7 +109,6 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
     });
   })
 });
-
 router.post('/', function(req, res, next) {
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
@@ -127,7 +128,7 @@ router.post('/', function(req, res, next) {
           company_created: newEntry
       });
 
-      addToDeviceList("company",req.body.device,req.body.lat, req.body.lng,'0','0',req.body.time);
+      addToDeviceList("company",req.body.device,req.body.lat, req.body.lng, getBatFromPayload(req.body.payload), getTempFromPayload(req.body.payload),req.body.time);
     })
     .catch(err => { 
       console.log(err);
@@ -137,6 +138,5 @@ router.post('/', function(req, res, next) {
       });
   });
 });
-
 
 module.exports = router;
