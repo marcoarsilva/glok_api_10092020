@@ -42,6 +42,7 @@ return degrees + minutes;
 }
 function batteryToPercent(battery, voltage) {
   if (battery.length <= 3){
+    
     var h = parseInt(battery) + parseInt(voltage);
     var p = parseFloat((h*15)/1000); 
     
@@ -139,21 +140,6 @@ router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, nex
 
   Sigfox.find({"timestamp": {"$gte": new ISODate(date1), "$lt": date2}}).then(result=> {
     console.log(result);
-  })
-});
-router.delete('/:id', methods.ensureToken ,function(req, res, next) {
-  Sigfox
-  .findByIdAndRemove(req.params.id)
-  .sort({_id:-1})
-  .limit(parseInt(req.params.limit))
-  .then(result => {
-      res.send(result);
-  })
-  .catch(err => {
-    res.status(500).json({
-        message: 'Server error',
-        error: err
-    });
   })
 });
 router.post('/', function(req, res, next) {

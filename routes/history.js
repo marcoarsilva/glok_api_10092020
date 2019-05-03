@@ -27,7 +27,6 @@ router.get('/:device' , function(req, res, next) {
 });
 
 router.delete('/:id' , function(req, res, next) {
-    console.log(req.params.device);
     History
         .findByIdAndRemove(req.params._id)
         .sort({_id:-1})  

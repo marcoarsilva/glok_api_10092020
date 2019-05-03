@@ -138,7 +138,7 @@ router.put('/:id', methods.ensureToken,function(req, res, next) {
         .catch(err => { 
             console.log(err);
             res.status(500).json({
-                message: 'Couldn\'t create company',
+                message: 'Couldn\'t create user',
                 error: err
             });
         });    
