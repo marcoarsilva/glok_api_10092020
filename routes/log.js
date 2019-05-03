@@ -138,6 +138,8 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
   })
 });
 router.post('/', function(req, res, next) {
+
+  console.log( "MENSAGEM DO SIGFOX ||" + req.body)
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
     device: req.body.device,
