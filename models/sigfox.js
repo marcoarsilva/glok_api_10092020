@@ -8,6 +8,10 @@ var sigfox = mongoose.Schema({
     station: String,
     lat: String,
     lng: String,
+    battery: String,
+    voltage: String,
+    acqspeed: String,
+    temp:String,
 });
 
 module.exports = mongoose.model('Sigfox', sigfox);

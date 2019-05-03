@@ -153,6 +153,7 @@ router.post('/', function(req, res, next) {
     time: Date.now(),
     lat: req.body.lat,
     lng: req.body.lng,
+    acqspeed: req.body.acqspeed,
     battery: req.body.battery,
     temp:req.body.temp,
   });
