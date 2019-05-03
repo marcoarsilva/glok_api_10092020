@@ -45,7 +45,8 @@ function batteryToPercent(battery, voltage) {
     var h = parseInt(battery) + parseInt(voltage);
     var p = parseFloat((h*15)/1000); 
     return p;
-  }
+  } 
+  return "ERR"
 }
 function temperatureToPercent(temp) {
   return parseFloat((temp*15)/100)
@@ -155,6 +156,7 @@ router.post('/', function(req, res, next) {
     time: Date.now(),
     lat: req.body.lat,
     lng: req.body.lng,
+    voltage: req.body.voltage,
     acqspeed: req.body.acqspeed,
     battery: req.body.battery,
     temp:req.body.temp,
@@ -176,7 +178,7 @@ router.post('/', function(req, res, next) {
       var lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
       var lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
 
-      addToDeviceList(req.body.device, lat, lng,  batteryToPercent(req.body.battery, req.body.acqspeed), temperatureToPercent(req.body.temp), req.body.time);
+      addToDeviceList(req.body.device, lat, lng,  batteryToPercent(req.body.battery, req.body.voltage), temperatureToPercent(req.body.temp), req.body.time);
     })
     .catch(err => { 
       console.log(err);
