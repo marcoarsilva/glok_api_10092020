@@ -40,6 +40,16 @@ minutes = Math.round(minutes * 10000) / 10000;
 return degrees + minutes;
 
 }
+function batteryToPercent(battery, voltage) {
+  if (battery.length <= 3){
+    var h = parseInt(battery) + parseInt(voltage);
+    var p = parseFloat((h*15)/1000); 
+    return p;
+  }
+}
+function temperatureToPercent(temp) {
+  return parseFloat((temp*15)/100)
+}
 function addToDeviceList(device, lat, lng, bat, temp){
   Device.find({device: device})
   .then(result => {
@@ -138,14 +148,6 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
   })
 });
 router.post('/', function(req, res, next) {
-
-  console.log( "::MENSAGEM DO SIGFOX::")
-  console.log( "BAT" + req.body.battery)
-  console.log( "VOLTAGE" + req.body.voltage)
-  console.log( "TEMP" + req.body.temp)
-
-
-
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
     device: req.body.device,
@@ -174,7 +176,7 @@ router.post('/', function(req, res, next) {
       var lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
       var lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
 
-      addToDeviceList(req.body.device, lat, lng, req.body.battery, req.body.temp, req.body.time);
+      addToDeviceList(req.body.device, lat, lng,  batteryToPercent(req.body.battery, req.body.acqspeed), temperatureToPercent(req.body.temp), req.body.time);
     })
     .catch(err => { 
       console.log(err);
