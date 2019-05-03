@@ -16,7 +16,8 @@
     "leaflet": "^1.4.0",
     "mongoose": "^5.4.7",
     "morgan": "~1.9.0",
-    "pug": "2.0.0-beta11",
+    "nodemon": "^1.19.0",
+    "pug": "^2.0.3",
     "swagger-ui-express": "^4.0.2"
   }
 }

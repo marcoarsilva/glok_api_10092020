@@ -146,7 +146,7 @@ router.put('/:id', methods.ensureToken,function(req, res, next) {
 
 router.delete('/:id', methods.ensureToken,function(req, res, next) {
     User
-        .deleteById(req.params.id)
+        .findByIdAndRemove(req.params.id)
         .then(result => {
             console.log(result);
             res.status(201).json({

@@ -36,7 +36,7 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
 router.delete('/:id', methods.ensureToken ,function(req, res, next) {
     if(!req.payload.user.isSuperAdmin){
       Device
-      .deleteById(req.params.id)
+      .findByIdAndRemove(req.params.id)
       .then(device => {
           res.send(device);
       })
