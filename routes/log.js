@@ -139,7 +139,13 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
 });
 router.post('/', function(req, res, next) {
 
-  console.log( "MENSAGEM DO SIGFOX ||" + req.body)
+  console.log( "::MENSAGEM DO SIGFOX::")
+  console.log( "BAT" + req.body.battery)
+  console.log( "VOLTAGE" + req.body.voltage)
+  console.log( "TEMP" + req.body.temp)
+
+
+
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
     device: req.body.device,
