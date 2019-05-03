@@ -44,7 +44,15 @@ function batteryToPercent(battery, voltage) {
   if (battery.length <= 3){
     var h = parseInt(battery) + parseInt(voltage);
     var p = parseFloat((h*15)/1000); 
-    return p;
+    
+    if(p > 2.54) {
+      let bat =(((p - 2.54) * 100) / 1.66).toFixed(0);
+      bat > 100 ? p = 100 : p = bat;
+    } else {
+        p = 0;
+    }
+  
+    return p
   } 
   return "ERR"
 }
