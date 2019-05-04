@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var methods = require("../methods");
+var moment = require('moment');
 
 var Sigfox = require('../models/sigfox');
 var Device = require('../models/device');
@@ -133,13 +134,15 @@ router.get('/:device/:limit', methods.ensureToken ,function(req, res, next) {
   })
 });
 router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, next) {
-  const date1 = new Date(req.params.date1);
-  const date2 = new Date(req.params.date2);
 
-  console.log(date1 + "!" + date2);
 
-  Sigfox.find({"timestamp": {"$gte": new ISODate(date1), "$lt": date2}}).then(result=> {
+var startDate = moment(new Date(req.params.date1)) 
+var endDate   = moment(new Date(req.params.date2))
+
+  console.log('$gte: ' +  startDate, '$lte: ' + endDate)
+  Sigfox.find({"device": req.params.device,"time": { '$gte': startDate, '$lte': endDate }}).then(result=> {
     console.log(result);
+    res.send(result);
   })
 });
 router.post('/', function(req, res, next) {

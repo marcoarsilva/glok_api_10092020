@@ -6,7 +6,7 @@ var methods = require("../methods");
 var Company = require('../models/company');
 
 router.get('/', methods.ensureToken ,function(req, res, next) {
-    if(req.payload.user.isSuperAdmin){
+    if(req.payload.user){
         Company
         .find({})
         .then(companies => {
@@ -47,7 +47,16 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
         Company
         .findByIdAndRemove(req.params.id)
         .then(company => {
-            res.send(company);
+            if(!company){
+                res.status(404).json({
+                    message: 'No device with id ' + req.params.id,
+                });
+               } else {
+                res.status(202).json({
+                    message: 'Successfuly deleted company',
+                    company_deleted: company
+                });
+               }
         })
         .catch(err => {
             res.status(404).json({
@@ -55,6 +64,10 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
                 error: err
             });
         })
+    } else {
+        res.status(403).json({
+            message: 'You dont have enough permissons',
+        });
     }
 
 });
