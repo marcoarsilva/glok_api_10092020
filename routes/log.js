@@ -3,7 +3,6 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var methods = require("../methods");
 var moment = require('moment');
-
 var Sigfox = require('../models/sigfox');
 var Device = require('../models/device');
 
@@ -35,11 +34,10 @@ while (binary.length < 8) {
 return binary;
 }
 function getDecimalCoord(sigfoxFrame) {
-var degrees = Math.floor(sigfoxFrame);
-var minutes = sigfoxFrame % 1 / 60 * 100;
-minutes = Math.round(minutes * 10000) / 10000;
-return degrees + minutes;
-
+  var degrees = Math.floor(sigfoxFrame);
+  var minutes = sigfoxFrame % 1 / 60 * 100;
+  minutes = Math.round(minutes * 10000) / 10000;
+  return degrees + minutes;
 }
 function batteryToPercent(battery, voltage) {
   if (battery.length <= 3){

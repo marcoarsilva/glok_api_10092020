@@ -1,10 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
-var methods = require("../methods")
 var jwt = require("jsonwebtoken")
-var mongoose = require('mongoose');
-
 var User = require('../models/user');
 
 router.post('/' ,function(req, res, next) {
