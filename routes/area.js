@@ -2,8 +2,6 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var methods = require("../methods")
-
-
 var Area = require('../models/area');
 
 router.get('/', methods.ensureToken,function(req, res, next) {
@@ -76,7 +74,7 @@ router.post('/', methods.ensureToken,function(req, res, next) {
         });
 });
  
-router.put('/:id', methods.ensureToken,function(req, res, next) {
+router.put('/:id', methods.ensureToken, function(req, res, next) {
     var newArea = new Area({
         name: req.body.name,
         points: req.body.points

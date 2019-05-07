@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var methods = require("../methods");
-
 var Company = require('../models/company');
 
 router.get('/', methods.ensureToken ,function(req, res, next) {
@@ -72,7 +71,7 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
 
 });
 
-router.post('/', methods.ensureToken,function(req, res, next) {
+router.post('/', methods.ensureToken, function(req, res, next) {
     if(req.payload.user.isSuperAdmin){
         var company = new Company({
             _id: mongoose.Types.ObjectId(),
@@ -104,7 +103,7 @@ router.post('/', methods.ensureToken,function(req, res, next) {
     }
 });
 
-router.put('/:id', methods.ensureToken,function(req, res, next) {
+router.put('/:id', methods.ensureToken, function(req, res, next) {
     if(req.payload.user.isSuperAdmin){
         var newCompany = new Company({
             name: req.body.name,
