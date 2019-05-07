@@ -155,8 +155,8 @@ router.post('/', function(req, res, next) {
     lng: req.body.lng,
     voltage: req.body.voltage,
     acqspeed: req.body.acqspeed,
-    battery: req.body.battery,
-    temp:req.body.temp,
+    battery: batteryToPercent(req.body.battery, req.body.voltage),
+    temp: temperatureToPercent(req.body.temp),
   });
 
   newEntry

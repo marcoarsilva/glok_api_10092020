@@ -82,35 +82,32 @@ router.put('/:id',methods.ensureToken ,function(req, res, next) {
 });
 
 router.delete('/:id', methods.ensureToken ,function(req, res, next) {
-        if(req.payload.user.isSuperAdmin){
-            Device
+    if(req.payload.user.isSuperAdmin){
+        Device
             .findByIdAndRemove(req.params.id)
             .then(device => {
-               if(!device){
-                res.status(404).json({
-                    message: 'No device with id ' + req.params.id,
-                });
-               } else {
-                res.status(202).json({
-                    message: 'Successfuly deleted device',
-                    device_deleted: device
-                });
-               }
-            })
-            .catch(err => {
-                res.status(500).json({
-                    message: 'Server error',
-                    error: err
-                });
-            })  
-        } else {
-            res.status(403).json({
-                message: 'You dont have enough permissons',
+                if(!device){
+                    res.status(404).json({
+                        message: 'No device with id ' + req.params.id,
+                    });
+                } else {
+                    res.status(202).json({
+                        message: 'Successfuly deleted device',
+                        device_deleted: device
+                    });
+                }
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
             });
-        }
- 
-                
-    
+        })  
+    } else {
+        res.status(403).json({
+            message: 'You dont have enough permissons',
+        });
+    } 
   });
 
 module.exports = router;
