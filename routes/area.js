@@ -3,6 +3,8 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var methods = require("../methods")
 var Area = require('../models/area');
+var Company = require('../models/company');
+
 
 router.get('/', methods.ensureToken,function(req, res, next) {
         Area
@@ -36,6 +38,13 @@ router.delete('/:id', methods.ensureToken,function(req, res, next) {
     Area
         .findByIdAndRemove(req.params.id)
         .then(area => {
+            Company.findOneAndUpdate({_id: req.payload.user.company}, 
+                {$pull: {areas: area.name}})
+            .then(company => {
+                console.log(company);
+            }).catch(err => {
+                console.log(err)
+            })
             res.send(area);
         })
         .catch(err => {
@@ -47,17 +56,24 @@ router.delete('/:id', methods.ensureToken,function(req, res, next) {
 });
 
 router.post('/', methods.ensureToken,function(req, res, next) {
-    console.log(req);
     var area = new Area({
         _id: mongoose.Types.ObjectId(),
         company: req.payload.user.company,
         name: req.body.name,
         points: req.body.points
     });
+ 
 
     area
         .save()
         .then(result => {
+
+            Company.findOneAndUpdate({_id: req.payload.user.company}, {$push: {areas: req.body.name}})
+                .then(company => {
+                    console.log(company);
+                })
+
+
             console.log(result);
             console.log(req.body);
             res.status(201).json({
