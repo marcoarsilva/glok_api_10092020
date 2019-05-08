@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var methods = require("../methods");
-
+var moment = require('moment');
 var Device = require('../models/device');
 
 router.get('/', methods.ensureToken ,function(req, res, next) {
@@ -31,7 +31,37 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
     })   
   }
 });
-
+router.get('/mot/:date1/:date2', methods.ensureToken ,function(req, res, next) {
+    console.log()
+    var startDate = moment(new Date(req.params.date1)) 
+    var endDate   = moment(new Date(req.params.date2))
+    
+    if(req.payload.user.isSuperAdmin){
+        Device
+        .find({mot: { '$gte': startDate, '$lte': endDate }})
+        .then(device => {
+            res.send(device);
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })   
+    } else {
+        Device
+        .find({company: req.payload.user.company, mot: { '$gte': startDate, '$lte': endDate }})
+        .then(device => {
+            res.send(device);
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })   
+    }
+});
 router.put('/:id',methods.ensureToken ,function(req, res, next) {
     if(!req.payload.user.isSuperAdmin){
         var newDevice = new Device({
@@ -79,7 +109,6 @@ router.put('/:id',methods.ensureToken ,function(req, res, next) {
     }
  
 });
-
 router.delete('/:id', methods.ensureToken ,function(req, res, next) {
     if(req.payload.user.isSuperAdmin){
         Device
