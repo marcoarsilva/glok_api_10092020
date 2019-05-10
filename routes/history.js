@@ -10,10 +10,10 @@ var History = require('../models/history');
 
 module.exports = router;
 
-router.get('/:device' , function(req, res, next) {
-    console.log(req.params.device);
+router.get('/:area' , function(req, res, next) {
+    console.log(req.params.area);
     History
-        .findOne({device: req.params.device})
+        .findOne({area: req.params.area})
         .sort({_id:-1})  
         .then(result => {
             res.send(result);

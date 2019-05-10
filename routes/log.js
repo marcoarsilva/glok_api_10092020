@@ -69,7 +69,8 @@ function addToDeviceList(device, lat, lng, bat, temp){
     if(result != ""){
       Device.findOneAndUpdate({device: device}, {lat: lat, lng: lng, bat: bat, temp: temp, last_seen: Date.now()})
       .then(result => {
-        isInsideGeofence(result.device, result.company, result.lat, result.lng);
+        console.log('HERE ' + result);
+        isInsideGeofence(result.device, result.notifications.isInsideGeofence,result.company, result.lat, result.lng);
       })
       .catch(err => console.log(err))
     } else {
@@ -84,7 +85,7 @@ function addToDeviceList(device, lat, lng, bat, temp){
       });
 
       newDevice.save().then(result => {
-        isInsideGeofence(result.device, result.company, result.lat, result.lng);
+        isInsideGeofence(result.device, result.notifications.isInsideGeofence, result.company, result.lat, result.lng);
         console.log('Added ' + result);
       }).catch(err => console.log(err));
     }
@@ -92,10 +93,11 @@ function addToDeviceList(device, lat, lng, bat, temp){
   })
   .catch(err =>{console.log(err)});
 }
-function isInsideGeofence(device, company, lat, lng) {
+function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
   var latLngs = [];
   var lats = [];
   var longs = [];
+  var inside = false;
 
   Company.findOne({_id: company}).then(companyItem => {
     companyItem.areas.forEach(areas => {
@@ -106,11 +108,31 @@ function isInsideGeofence(device, company, lat, lng) {
             longs.push([point.lng]);
           });
 
-          if(classifyPoint(latLngs ,[lat, lng]) == -1){
-            console.log(device + "|" + "INSIDE" + ">" + area.name  );
+          if(classifyPoint(latLngs ,[lat, lng]) == -1 ){
+            console.log(device + "["+ isInsideGeofence + "|" + "INSIDE" + "]" + area.name  );
+            inside = true;
           } else {
-            console.log(device + "|" + "OUTSIDE" + ">" + area.name  );
+            console.log(device + "["+ isInsideGeofence+ "|" + "OUTSIDE" + "]" + area.name  );
           }
+
+          Device.findOneAndUpdate({device: device}, {notifications: {isInsideGeofence: true}})
+          .then(result => {
+            console.log(result);
+          });
+
+          if(isInsideGeofence != inside) {
+            var history = new History({
+              _id: mongoose.Types.ObjectId(),
+              area: area.name,
+              device: device,
+              action: inside,
+              timestamp: Date.now()
+            });
+            notifyCompany();
+
+            history.save().catch(err => {console.log(err)});
+        
+        } 
 
            latLngs = [];
            lats = [];
@@ -119,7 +141,7 @@ function isInsideGeofence(device, company, lat, lng) {
     });
   });
 }
-function saveGeofenceLog() {
+function notifyCompany() {
 
 }
 router.get('/', methods.ensureToken ,function(req, res, next) {
