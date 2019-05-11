@@ -10,11 +10,26 @@ var History = require('../models/history');
 
 module.exports = router;
 
-router.get('/:device' , function(req, res, next) {
-    console.log(req.params.device);
+router.get('/:area' , function(req, res, next) {
     History
-        .findOne({device: req.params.device})
+        .find({area: req.params.area})
         .sort({_id:-1})  
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+router.get('/:area/:date1/:date2' , function(req, res, next) {
+    var startDate = moment(new Date(req.params.date1)) 
+    var endDate   = moment(new Date(req.params.date2))
+    
+    History
+        .find({area: req.params.area, timestamp: { '$gte': startDate, '$lte': endDate }})
         .then(result => {
             res.send(result);
         })

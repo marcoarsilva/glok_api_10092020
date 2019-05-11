@@ -3,8 +3,12 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var methods = require("../methods");
 var moment = require('moment');
+var classifyPoint = require("robust-point-in-polygon");
 var Sigfox = require('../models/sigfox');
 var Device = require('../models/device');
+var Company = require('../models/company');
+var Area = require('../models/area');
+var History = require('../models/history');
 
 function getBinaryFrame(payload) {
   var bytes = payload.match(/.{1,2}/g);
@@ -20,18 +24,18 @@ function getBinaryFrame(payload) {
   
 }
 function getBinaryFromHex(byte) {
-var num = Number(parseInt(byte, 16));
-if (isNaN(num)) {
-  return null;
-}
-var binary = num.toString(2);
+  var num = Number(parseInt(byte, 16));
+  if (isNaN(num)) {
+    return null;
+  }
+  var binary = num.toString(2);
 
-//Fill the byte with zeros
-while (binary.length < 8) {
-  binary = '0' + binary;
-}
+  //Fill the byte with zeros
+  while (binary.length < 8) {
+    binary = '0' + binary;
+  }
 
-return binary;
+  return binary;
 }
 function getDecimalCoord(sigfoxFrame) {
   var degrees = Math.floor(sigfoxFrame);
@@ -65,7 +69,8 @@ function addToDeviceList(device, lat, lng, bat, temp){
     if(result != ""){
       Device.findOneAndUpdate({device: device}, {lat: lat, lng: lng, bat: bat, temp: temp, last_seen: Date.now()})
       .then(result => {
-        console.log(result)
+        console.log('HERE ' + result);
+        isInsideGeofence(result.device, result.notifications.isInsideGeofence,result.company, result.lat, result.lng);
       })
       .catch(err => console.log(err))
     } else {
@@ -80,14 +85,61 @@ function addToDeviceList(device, lat, lng, bat, temp){
       });
 
       newDevice.save().then(result => {
+        isInsideGeofence(result.device, result.notifications.isInsideGeofence, result.company, result.lat, result.lng);
         console.log('Added ' + result);
-      })
+      }).catch(err => console.log(err));
     }
  
   })
   .catch(err =>{console.log(err)});
 }
+function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
+  var latLngs = [];
+  var lats = [];
+  var longs = [];
+  var inside = false;
 
+  Company.findOne({_id: company}).then(companyItem => {
+    companyItem.areas.forEach(areas => {
+        Area.findOne({name: areas}).then( area => {
+          area.points.forEach( point => {
+            latLngs.push([point.lat,point.lng]);
+            lats.push([point.lat]);
+            longs.push([point.lng]);
+          });
+
+          if(classifyPoint(latLngs ,[lat, lng]) == -1 ){
+            console.log(device + "["+ isInsideGeofence + "|" + "INSIDE" + "]" + area.name  );
+            inside = true;
+          } else {
+            console.log(device + "["+ isInsideGeofence+ "|" + "OUTSIDE" + "]" + area.name  );
+          }
+
+          if(isInsideGeofence != inside) {
+            Device.findOneAndUpdate({device: device}, {notifications: {isInsideGeofence: inside}});
+
+            var history = new History({
+              _id: mongoose.Types.ObjectId(),
+              area: area.name,
+              device: device,
+              action: inside,
+              timestamp: Date.now()
+            });
+            notifyCompany();
+
+            history.save().catch(err => {console.log(err)});
+        } 
+
+           latLngs = [];
+           lats = [];
+           longs = [];
+        });
+    });
+  });
+}
+function notifyCompany() {
+
+}
 router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({})
