@@ -115,12 +115,9 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
             console.log(device + "["+ isInsideGeofence+ "|" + "OUTSIDE" + "]" + area.name  );
           }
 
-          Device.findOneAndUpdate({device: device}, {notifications: {isInsideGeofence: true}})
-          .then(result => {
-            console.log(result);
-          });
-
           if(isInsideGeofence != inside) {
+            Device.findOneAndUpdate({device: device}, {notifications: {isInsideGeofence: inside}});
+
             var history = new History({
               _id: mongoose.Types.ObjectId(),
               area: area.name,
@@ -131,7 +128,6 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
             notifyCompany();
 
             history.save().catch(err => {console.log(err)});
-        
         } 
 
            latLngs = [];
