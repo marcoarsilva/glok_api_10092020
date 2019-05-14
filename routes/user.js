@@ -3,6 +3,10 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var methods = require("../methods");
 var User = require('../models/user');
+var aes256 = require('aes256');
+var key = 'm3k3r1@08dummIO!';
+var cipher = aes256.createCipher(key);
+
 
 router.get('/', methods.ensureToken, function(req, res, next) {
     if(req.payload.user.isAdmin){
@@ -46,7 +50,7 @@ router.post('/', methods.ensureToken , methods.companyExists , function(req, res
             name: req.body.name,
             email: req.body.email,
             username: req.body.username,
-            password: req.body.password,
+            password: cipher.encrypt(req.body.password),
             company: req.body.company
         });
         
