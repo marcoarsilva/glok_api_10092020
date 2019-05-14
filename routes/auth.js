@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 var jwt = require("jsonwebtoken")
 var User = require('../models/user');
+var aes256 = require('aes256');
+var key = 'm3k3r1@08dummIO!';
+var cipher = aes256.createCipher(key);
+
 
 router.post('/' ,function(req, res, next) {
   let p_username = req.body.username;
@@ -17,7 +21,7 @@ router.post('/' ,function(req, res, next) {
         else 
           permisson = "User"
 
-        if(p_username === result.username && p_password === result.password){
+        if(p_username === result.username && p_password === cipher.decrypt(result.password)){
             jwt.sign({user: result}, '08dummIO@',(err, token) => {
                 res.send({
                   ok: true,

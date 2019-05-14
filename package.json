@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "aes256": "^1.0.4",
     "compare-dates": "^2.0.0",
     "cookie-parser": "~1.4.3",
     "d3-geo": "^1.11.3",
