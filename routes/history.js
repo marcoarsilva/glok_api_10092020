@@ -40,7 +40,35 @@ router.get('/:area/:date1/:date2' , function(req, res, next) {
             });
         })
 });
-
+router.get('/:area/:device' , function(req, res, next) { 
+    History
+        .find({area: req.params.area, device: req.params.device})
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+router.get('/:area/:date1/:date2/:device' , function(req, res, next) {
+    var startDate = moment(new Date(req.params.date1)) 
+    var endDate   = moment(new Date(req.params.date2))
+    
+    History
+        .find({area: req.params.area, timestamp: { '$gte': startDate, '$lte': endDate }, device: req.params.device})
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
 router.delete('/:id' , function(req, res, next) {
     History
         .findByIdAndRemove(req.params._id)
@@ -55,7 +83,6 @@ router.delete('/:id' , function(req, res, next) {
             });
         })
 });
-
 router.post('/' , function(req, res, next) {
     console.log(req.params.device);
 
