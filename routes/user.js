@@ -16,13 +16,13 @@ router.post('/changePassword', methods.ensureToken, (req, res, next) => {
                 })
             )
             .catch(err => {
-                    res.status(500).json({
+                    res.status(200).json({
                         message: 'Server error',
                         error: err
                     });
             })
     } else {
-        res.status(403).json({
+        res.status(200).json({
             message: 'Wrong password',
         });
     }
