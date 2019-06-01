@@ -7,7 +7,7 @@ var mongoose = require('mongoose');
 var methods = require("methods");
 var swaggerUi = require('swagger-ui-express');
 var swaggerDocument = require('./swagger.json');
-
+var conf = require('./configs.js');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/user');
 var companyRouter = require('./routes/company');
@@ -17,10 +17,12 @@ var authRouter = require('./routes/auth');
 var areaRouter = require('./routes/area');
 var historyRouter = require('./routes/history');
 
+
+
 var app = express();
 
 //connect to database
-mongoose.connect('mongodb://77.68.86.48:47017/glok?authSource=admin', {useNewUrlParser: true});
+mongoose.connect(conf.mongodb, {useNewUrlParser: true});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

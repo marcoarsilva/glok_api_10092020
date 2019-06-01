@@ -9,6 +9,9 @@ var Device = require('../models/device');
 var Company = require('../models/company');
 var Area = require('../models/area');
 var History = require('../models/history');
+var conf = require('../configs.js');
+var isNotified = [];
+
 
 function getBinaryFrame(payload) {
   var bytes = payload.match(/.{1,2}/g);
@@ -69,7 +72,6 @@ function addToDeviceList(device, lat, lng, bat, temp){
     if(result != ""){
       Device.findOneAndUpdate({device: device}, {lat: lat, lng: lng, bat: bat, temp: temp, last_seen: Date.now()})
       .then(result => {
-        console.log('HERE ' + result);
         isInsideGeofence(result.device, result.notifications.isInsideGeofence,result.company, result.lat, result.lng);
       })
       .catch(err => console.log(err))
@@ -98,6 +100,7 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
   var lats = [];
   var longs = [];
   var inside = false;
+  var textMail = '';
 
   Company.findOne({_id: company}).then(companyItem => {
     companyItem.areas.forEach(areas => {
@@ -108,27 +111,53 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
             longs.push([point.lng]);
           });
 
-          if(classifyPoint(latLngs ,[lat, lng]) == -1 ){
-            console.log(device + "["+ isInsideGeofence + "|" + "INSIDE" + "]" + area.name  );
-            inside = true;
-          } else {
-            console.log(device + "["+ isInsideGeofence+ "|" + "OUTSIDE" + "]" + area.name  );
+          var wtf = classifyPoint(latLngs ,[lat, lng]);
+          
+          if(!isNotified.includes(device)) {
+            isNotified.push(device)
+            isNotified[device] = [];
           }
 
-          if(isInsideGeofence != inside) {
-            Device.findOneAndUpdate({device: device}, {notifications: {isInsideGeofence: inside}});
 
-            var history = new History({
-              _id: mongoose.Types.ObjectId(),
-              area: area.name,
-              device: device,
-              action: inside,
-              timestamp: Date.now()
-            });
-            notifyCompany();
 
-            history.save().catch(err => {console.log(err)});
-        } 
+          if( wtf == -1 ){
+            textMail = device + " is now inside geofence  " + area.name;
+            inside = true;
+
+            if(!isNotified[device].includes(area.name)) {
+              isNotified[device].push(area.name);
+              var history = new History({
+                _id: mongoose.Types.ObjectId(),
+                area: area.name,
+                device: device,
+                action: inside,
+                timestamp: Date.now()
+              });
+              notifyCompany(company, textMail);
+  
+              history.save().catch(err => {console.log(err)});
+            }
+          } else {
+            textMail = device + " is now outside geofence  " + area.name;
+            inside = false;
+
+            if(isNotified[device].includes(area.name)) { 
+              isNotified[device].splice(isNotified[device].indexOf(area.name), 1); 
+              var history = new History({
+                _id: mongoose.Types.ObjectId(),
+                area: area.name,
+                device: device,
+                action: inside,
+                timestamp: Date.now()
+              });
+              notifyCompany(company, textMail);
+  
+              history.save().catch(err => {console.log(err)});
+            }
+          }
+
+          console.log(isNotified)
+          console.log(textMail);
 
            latLngs = [];
            lats = [];
@@ -137,8 +166,20 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
     });
   });
 }
-function notifyCompany() {
+function notifyCompany(company, textMail) {
+  console.log("AQUI " +  company);
+  
+  var mail = {
+    from: "notifications@gloksystems.co.uk",
+    to: "m3k3r1@gmail.com",
+    subject: "GLOK area update",
+    text: textMail
+  }
 
+  conf.mailTransporter.sendMail(mail, (err, info) => {
+      if(err)
+          console.log(err)
+  });
 }
 router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox

@@ -38,6 +38,12 @@ router.delete('/:id', methods.ensureToken,function(req, res, next) {
     Area
         .findByIdAndRemove(req.params.id)
         .then(area => {
+            res.status(200).json({
+                message: 'Successfully deleted area',
+                area_deleted: area
+            });
+
+
             Company.findOneAndUpdate({_id: req.payload.user.company}, 
                 {$pull: {areas: area.name}})
             .then(company => {
@@ -45,7 +51,7 @@ router.delete('/:id', methods.ensureToken,function(req, res, next) {
             }).catch(err => {
                 console.log(err)
             })
-            res.send(area);
+    
         })
         .catch(err => {
             res.status(404).json({

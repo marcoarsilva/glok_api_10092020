@@ -137,6 +137,7 @@ router.delete('/:id', methods.ensureToken,function(req, res, next) {
             console.log(result);
             res.status(201).json({
                 message: 'Successfully deleted user',
+                user_deleted: result
             });
         })
         .catch(err => { 

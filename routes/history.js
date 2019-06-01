@@ -4,13 +4,13 @@ var mongoose = require('mongoose');
 var methods = require("../methods");
 var jwt = require("jsonwebtoken");
 var mongoose = require('mongoose');
-
+var methods = require("../methods");
 var History = require('../models/history');
 
 
 module.exports = router;
 
-router.get('/:area' , function(req, res, next) {
+router.get('/:area' , methods.ensureToken ,function(req, res, next) {
     History
         .find({area: req.params.area})
         .sort({_id:-1})  
@@ -24,7 +24,7 @@ router.get('/:area' , function(req, res, next) {
             });
         })
 });
-router.get('/:area/:date1/:date2' , function(req, res, next) {
+router.get('/:area/:date1/:date2' , methods.ensureToken ,function(req, res, next) {
     var startDate = moment(new Date(req.params.date1)) 
     var endDate   = moment(new Date(req.params.date2))
     
@@ -40,7 +40,7 @@ router.get('/:area/:date1/:date2' , function(req, res, next) {
             });
         })
 });
-router.get('/:area/:device' , function(req, res, next) { 
+router.get('/:area/:device' , methods.ensureToken ,function(req, res, next) { 
     History
         .find({area: req.params.area, device: req.params.device})
         .then(result => {
@@ -53,7 +53,7 @@ router.get('/:area/:device' , function(req, res, next) {
             });
         })
 });
-router.get('/:area/:date1/:date2/:device' , function(req, res, next) {
+router.get('/:area/:date1/:date2/:device' , methods.ensureToken ,function(req, res, next) {
     var startDate = moment(new Date(req.params.date1)) 
     var endDate   = moment(new Date(req.params.date2))
     
@@ -69,7 +69,7 @@ router.get('/:area/:date1/:date2/:device' , function(req, res, next) {
             });
         })
 });
-router.delete('/:id' , function(req, res, next) {
+router.delete('/:id' , methods.ensureToken ,function(req, res, next) {
     History
         .findByIdAndRemove(req.params._id)
         .sort({_id:-1})  
@@ -83,7 +83,7 @@ router.delete('/:id' , function(req, res, next) {
             });
         })
 });
-router.post('/' , function(req, res, next) {
+router.post('/' , methods.ensureToken ,function(req, res, next) {
     console.log(req.params.device);
 
     var newLog = new History({
