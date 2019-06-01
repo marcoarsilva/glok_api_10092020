@@ -7,6 +7,26 @@ var aes256 = require('aes256');
 var key = 'm3k3r1@08dummIO!';
 var cipher = aes256.createCipher(key);
 
+router.post('/changePassword', methods.ensureToken, (req, res, next) => {
+    if(req.body.oldPassword == cipher.decrypt(req.payload.user.password)){
+        User.findByIdAndUpdate(req.payload.user._id, {password: cipher.encrypt(req.body.newPassword)})
+            .then(
+                res.status(200).json({
+                    message: 'Password updated',
+                })
+            )
+            .catch(err => {
+                    res.status(500).json({
+                        message: 'Server error',
+                        error: err
+                    });
+            })
+    } else {
+        res.status(403).json({
+            message: 'Wrong password',
+        });
+    }
+});
 
 router.get('/', methods.ensureToken, function(req, res, next) {
     if(req.payload.user.isAdmin){
