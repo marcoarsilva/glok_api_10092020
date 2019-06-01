@@ -9,6 +9,7 @@ var Device = require('../models/device');
 var Company = require('../models/company');
 var Area = require('../models/area');
 var History = require('../models/history');
+var User = require('../models/user')
 var conf = require('../configs.js');
 var isNotified = [];
 
@@ -167,19 +168,31 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
   });
 }
 function notifyCompany(company, textMail) {
-  console.log("AQUI " +  company);
   
-  var mail = {
-    from: "notifications@gloksystems.co.uk",
-    to: "m3k3r1@gmail.com",
-    subject: "GLOK area update",
-    text: textMail
-  }
+  User.find({company: company}).then( users => {
+    users.forEach( user => {
+      var mail = {
+        from: "notifications@gloksystems.co.uk",
+        to: user.email,
+        subject: "GLOK area update",
+        text: textMail
+      }
 
-  conf.mailTransporter.sendMail(mail, (err, info) => {
-      if(err)
+      conf.mailTransporter.sendMail(mail, (err, info) => {
+        if(err)
           console.log(err)
-  });
+        else
+          console.log(info);
+    });
+    })
+  })
+
+
+
+
+ 
+
+  
 }
 router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox
