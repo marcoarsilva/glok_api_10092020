@@ -34,22 +34,46 @@ module.exports.companyExists = function(req, res, next) {
         });
 }
 
-// TODO
+module.exports.companyAlreadyExists = function(req, res, next) {
+    Company
+    .find({name: req.body.name})
+    .then( result => {
+        if(result.length){
+            res.status(409).json({
+                message: 'Company already exists: ' + req.body.name,
+            });
+        } else {
+            next();
+        }
+    })
+    .catch(err => { 
+        res.status(500).json({
+            message: 'Server error',
+            error: err
+        });
+    
+    });
+}
+
+
 module.exports.usernameExists = function(req, res, next) {
-    next();
-}
-
-//TODO
-module.exports.emailExists = function(req, res, next) {
-    next();
-}
-
-// TODO
-module.exports.encryptPassword = function() {
-
-}
-
-// TODO
-module.exports.decryptPassword = function() {
+    User
+        .find({name: req.body.name})
+        .then( result => {
+            if(result.length){
+                res.status(409).json({
+                    message: 'Username already exists: ' + req.body.name,
+                });
+            } else {
+                next();
+            }
+        })
+        .catch(err => { 
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        
+        });
 
 }

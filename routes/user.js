@@ -61,7 +61,7 @@ router.get('/', methods.ensureToken, function(req, res, next) {
   
 });
 
-router.post('/', methods.ensureToken , methods.companyExists , function(req, res, next) {
+router.post('/', methods.ensureToken , methods.usernameExists , methods.companyExists , function(req, res, next) {
     if(req.payload.user.isSuperAdmin){         
         var user = new User({
             _id: mongoose.Types.ObjectId(),

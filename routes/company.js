@@ -71,7 +71,7 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
 
 });
 
-router.post('/', methods.ensureToken, function(req, res, next) {
+router.post('/', methods.ensureToken, methods.companyAlreadyExists ,function(req, res, next) {
     if(req.payload.user.isSuperAdmin){
         var company = new Company({
             _id: mongoose.Types.ObjectId(),
