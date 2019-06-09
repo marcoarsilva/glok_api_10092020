@@ -194,6 +194,7 @@ function notifyCompany(company, textMail) {
 
   
 }
+
 router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox
   .find({})

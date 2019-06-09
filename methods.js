@@ -1,5 +1,7 @@
 let jwt = require('jsonwebtoken')
 var Company = require('./models/company');
+var Area = require('./models/area');
+var User = require('./models/user')
 
 module.exports.ensureToken = function(req, res, next) {
     var bearerHeader = req.headers["authorization"];
@@ -55,6 +57,26 @@ module.exports.companyAlreadyExists = function(req, res, next) {
     });
 }
 
+module.exports.areaExists = function (req, res, next) {
+    Area
+        .find({name: req.body.name})
+        .then( result => {
+            if(result.length){
+                res.status(409).json({
+                    message: 'Area already exists: ' + req.body.name,
+                });
+            } else {
+                next();
+            }
+        })
+        .catch(err => { 
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        
+        });
+}
 
 module.exports.usernameExists = function(req, res, next) {
     User

@@ -23,6 +23,25 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
         }); 
     }
 });
+router.get('/areas', methods.ensureToken ,function(req, res, next) {
+    if(req.payload.user){
+        Company
+        .findById(req.payload.user.company)
+        .then(company => {
+            res.send(company.areas);
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+    } else {
+        res.status(403).json({
+            message: 'You dont have permisson to access this route',
+        }); 
+    }
+});
 
 router.get('/:id', methods.ensureToken ,function(req, res, next) {
     if(req.payload.user.isSuperAdmin){

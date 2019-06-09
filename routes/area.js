@@ -61,7 +61,7 @@ router.delete('/:id', methods.ensureToken,function(req, res, next) {
         })
 });
 
-router.post('/', methods.ensureToken,function(req, res, next) {
+router.post('/', methods.ensureToken, methods.areaExists , function(req, res, next) {
     var area = new Area({
         _id: mongoose.Types.ObjectId(),
         company: req.payload.user.company,
@@ -77,7 +77,7 @@ router.post('/', methods.ensureToken,function(req, res, next) {
             Company.findOneAndUpdate({_id: req.payload.user.company}, {$push: {areas: req.body.name}})
                 .then(company => {
                     console.log(company);
-                })
+                });
 
 
             console.log(result);
