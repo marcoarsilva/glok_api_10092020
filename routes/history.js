@@ -25,6 +25,41 @@ router.get('/:area' , methods.ensureToken ,function(req, res, next) {
             });
         })
 });
+
+router.get('/byDevice/:device' , methods.ensureToken ,function(req, res, next) {
+    History
+        .find({device: req.params.device})
+        .sort({_id:-1})  
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+
+router.get('/byDevice/:device/:date1/:date2' , methods.ensureToken ,function(req, res, next) {
+    var startDate = moment(new Date(req.params.date1)) 
+    var endDate   = moment(new Date(req.params.date2))
+
+
+    History
+    .find({device: req.params.device, timestamp: { '$gte': startDate, '$lte': endDate }})
+    .then(result => {
+        res.send(result);
+    })
+    .catch( err => {
+        console.log(err);
+        res.status(500).json({
+            message: 'Server error',
+            error: err
+        });
+    })
+});
+
 router.get('/:area/:date1/:date2' , methods.ensureToken ,function(req, res, next) {
     var startDate = moment(new Date(req.params.date1)) 
     var endDate   = moment(new Date(req.params.date2))

@@ -31,6 +31,35 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
     })   
   }
 });
+
+router.get('/:device', methods.ensureToken ,function(req, res, next) {
+    if(!req.payload.user.isSuperAdmin){
+      Device
+      .find({company: req.payload.user.company, device: req.params.device})
+      .then(device => {
+          res.send(device);
+      })
+      .catch(err => {
+          res.status(500).json({
+              message: 'Server error',
+              error: err
+          });
+      })   
+    } else {
+      Device
+      .find({device: req.params.device})
+      .then(device => {
+          res.send(device);
+      })
+      .catch(err => {
+          res.status(500).json({
+              message: 'Server error',
+              error: err
+          });
+      })   
+    }
+  });
+
 router.get('/mot/:date1/:date2', methods.ensureToken ,function(req, res, next) {
     console.log()
     var startDate = moment(new Date(req.params.date1)) 

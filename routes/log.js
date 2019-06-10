@@ -125,6 +125,11 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
             textMail = device + " is now inside geofence  " + area.name;
             inside = true;
 
+            Area.findOneAndUpdate({_id: area._id}, {$push: {device: device}})
+            .then(company => {
+                console.log(company);
+            });
+
             if(!isNotified[device].includes(area.name)) {
               isNotified[device].push(area.name);
               var history = new History({
@@ -141,6 +146,12 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
           } else {
             textMail = device + " is now outside geofence  " + area.name;
             inside = false;
+
+
+            Area.findOneAndUpdate({_id: area._id}, {$pull: {device: device}})
+            .then(company => {
+                console.log(company);
+            });
 
             if(isNotified[device].includes(area.name)) { 
               isNotified[device].splice(isNotified[device].indexOf(area.name), 1); 
