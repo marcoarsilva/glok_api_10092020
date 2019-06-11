@@ -110,7 +110,7 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
             latLngs.push([point.lat,point.lng]);
             lats.push([point.lat]);
             longs.push([point.lng]);
-          });
+          }).catch(err => {console.log(err)});
 
           var wtf = classifyPoint(latLngs ,[lat, lng]);
           
