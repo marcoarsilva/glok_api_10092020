@@ -125,9 +125,9 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
             textMail = device + " is now inside geofence  " + area.name;
             inside = true;
 
-            Area.findOneAndUpdate({_id: area._id}, {$push: {device: device}})
-            .then(company => {
-                console.log(company);
+            Area.findOneAndUpdate({name: areas}, {$push: {device: device}})
+            .catch(err => {
+                console.log(err);
             });
 
             if(!isNotified[device].includes(area.name)) {
@@ -148,9 +148,9 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
             inside = false;
 
 
-            Area.findOneAndUpdate({_id: area._id}, {$pull: {device: device}})
-            .then(company => {
-                console.log(company);
+            Area.findOneAndUpdate({name: areas}, {$pull: {device: device}})
+            .catch(err => {
+                console.log(err);
             });
 
             if(isNotified[device].includes(area.name)) { 
