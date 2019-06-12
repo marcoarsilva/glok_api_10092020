@@ -120,7 +120,6 @@ router.delete('/:id' , methods.ensureToken ,function(req, res, next) {
         })
 });
 router.post('/' , methods.ensureToken ,function(req, res, next) {
-    console.log(req.params.device);
 
     var newLog = new History({
         _id: mongoose.Types.ObjectId(),

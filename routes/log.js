@@ -110,7 +110,7 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
             latLngs.push([point.lat,point.lng]);
             lats.push([point.lat]);
             longs.push([point.lng]);
-          }).catch(err => {console.log(err)});
+          });
 
           var wtf = classifyPoint(latLngs ,[lat, lng]);
           
@@ -123,9 +123,14 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
 
           if( wtf == -1 ){
             textMail = device + " is now inside geofence  " + area.name;
+            console.log("HERE -- 1")
             inside = true;
 
-            Area.findOneAndUpdate({name: area.name}, {$push: {device: device}})
+            console.log("HERE -- 2 -> ADDING " + device + " to  " + area.name);
+            Area.findOneAndUpdate({name: area.name}, {$push: {devices: device}}).then( res => {
+              console.log("HERE -- 3")
+              console.log(res);
+            })
             .catch(err => {
                 console.log(err);
             });
@@ -148,7 +153,7 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
             inside = false;
 
 
-            Area.findOneAndUpdate({name: area.name}, {$pull: {device: device}})
+            Area.findOneAndUpdate({name: area.name}, {$pull: {devices: device}})
             .catch(err => {
                 console.log(err);
             });
@@ -176,7 +181,8 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
            longs = [];
         });
     });
-  });
+  })
+  .catch(err => {console.log(err)});
 }
 function notifyCompany(company, textMail) {
   
@@ -275,7 +281,6 @@ router.post('/', function(req, res, next) {
   newEntry
     .save()
     .then(result => {
-      console.log(result);
       res.status(201).json({
           message: req.body.device + ' entry successfully added',
           company_created: newEntry
