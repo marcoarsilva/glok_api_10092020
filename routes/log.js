@@ -53,7 +53,9 @@ function batteryToPercent(battery, voltage) {
     var h = parseInt(battery) + parseInt(voltage);
     var p = parseFloat((h*15)/1000); 
     
-    if(p > 2.54) {
+    if(p > 4.1) {
+      p = 100
+    } else if(p > 2.54) {
       let bat =(((p - 2.54) * 100) / 1.66).toFixed(0);
       bat > 100 ? p = 100 : p = bat;
     } else {
@@ -73,7 +75,7 @@ function addToDeviceList(device, lat, lng, bat, temp){
     if(result != ""){
       Device.findOneAndUpdate({device: device}, {lat: lat, lng: lng, bat: bat, temp: temp, last_seen: Date.now()})
       .then(result => {
-        isInsideGeofence(result.device, result.notifications.isInsideGeofence,result.company, result.lat, result.lng);
+        isInsideGeofence(result.device, result.name ? result.name: result.device ,result.company, result.lat, result.lng);
       })
       .catch(err => console.log(err))
     } else {
@@ -88,7 +90,7 @@ function addToDeviceList(device, lat, lng, bat, temp){
       });
 
       newDevice.save().then(result => {
-        isInsideGeofence(result.device, result.notifications.isInsideGeofence, result.company, result.lat, result.lng);
+        isInsideGeofence(result.device, result.name ?  result.name: result.device , result.company, result.lat, result.lng);
         console.log('Added ' + result);
       }).catch(err => console.log(err));
     }
@@ -96,7 +98,7 @@ function addToDeviceList(device, lat, lng, bat, temp){
   })
   .catch(err =>{console.log(err)});
 }
-function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
+function isInsideGeofence(device, device_name ,company, lat, lng) {
   var latLngs = [];
   var lats = [];
   var longs = [];
@@ -104,8 +106,11 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
   var textMail = '';
 
   Company.findOne({_id: company}).then(companyItem => {
+    console.log(companyItem)
     companyItem.areas.forEach(areas => {
+      console.log(areas)
         Area.findOne({name: areas}).then( area => {
+          console.log(area);
           area.points.forEach( point => {
             latLngs.push([point.lat,point.lng]);
             lats.push([point.lat]);
@@ -122,7 +127,7 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
 
 
           if( wtf == -1 ){
-            textMail = device + " is now inside geofence  " + area.name;
+            textMail = device + "[" + device_name + "]" + " is now inside geofence  " + area.name;
             console.log("HERE -- 1")
             inside = true;
 
@@ -149,7 +154,7 @@ function isInsideGeofence(device, isInsideGeofence ,company, lat, lng) {
               history.save().catch(err => {console.log(err)});
             }
           } else {
-            textMail = device + " is now outside geofence  " + area.name;
+            textMail = device + "[" + device_name + "]" + " is now outside geofence  " + area.name;
             inside = false;
 
 
@@ -202,14 +207,7 @@ function notifyCompany(company, textMail) {
           console.log(info);
     });
     })
-  })
-
-
-
-
- 
-
-  
+  })  
 }
 
 router.get('/', methods.ensureToken ,function(req, res, next) {

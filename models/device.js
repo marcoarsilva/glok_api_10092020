@@ -13,7 +13,7 @@ var deviceSchema = mongoose.Schema({
     notes: String,
     last_seen: mongoose.Schema.Types.Date,
     notifications:{
-        downFor1Week: mongoose.Schema.Types.Boolean,
+        deviceDown: mongoose.Schema.Types.Boolean,
         sameLocation1Week: mongoose.Schema.Types.Boolean,
         noSpeed: mongoose.Schema.Types.Boolean,
         isInsideGeofence: mongoose.Schema.Types.Boolean
