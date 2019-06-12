@@ -109,82 +109,83 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
     console.log(companyItem)
     companyItem.areas.forEach(areas => {
       console.log(areas)
-        Area.findOne({name: areas}).then( area => {
-          console.log(area);
-          area.points.forEach( point => {
-            latLngs.push([point.lat,point.lng]);
-            lats.push([point.lat]);
-            longs.push([point.lng]);
+      if(areas != " ")
+          Area.findOne({name: areas}).then( area => {
+            console.log(area);
+            area.points.forEach( point => {
+              latLngs.push([point.lat,point.lng]);
+              lats.push([point.lat]);
+              longs.push([point.lng]);
+            });
+
+            var wtf = classifyPoint(latLngs ,[lat, lng]);
+            
+            if(!isNotified.includes(device)) {
+              isNotified.push(device)
+              isNotified[device] = [];
+            }
+
+
+
+            if( wtf == -1 ){
+              textMail = device + "[" + device_name + "]" + " is now inside geofence  " + area.name;
+              console.log("HERE -- 1")
+              inside = true;
+
+              console.log("HERE -- 2 -> ADDING " + device + " to  " + area.name);
+              Area.findOneAndUpdate({name: area.name}, {$push: {devices: device}}).then( res => {
+                console.log("HERE -- 3")
+                console.log(res);
+              })
+              .catch(err => {
+                  console.log(err);
+              });
+
+              if(!isNotified[device].includes(area.name)) {
+                isNotified[device].push(area.name);
+                var history = new History({
+                  _id: mongoose.Types.ObjectId(),
+                  area: area.name,
+                  device: device,
+                  action: inside,
+                  timestamp: Date.now()
+                });
+                notifyCompany(company, textMail);
+    
+                history.save().catch(err => {console.log(err)});
+              }
+            } else {
+              textMail = device + "[" + device_name + "]" + " is now outside geofence  " + area.name;
+              inside = false;
+
+
+              Area.findOneAndUpdate({name: area.name}, {$pull: {devices: device}})
+              .catch(err => {
+                  console.log(err);
+              });
+
+              if(isNotified[device].includes(area.name)) { 
+                isNotified[device].splice(isNotified[device].indexOf(area.name), 1); 
+                var history = new History({
+                  _id: mongoose.Types.ObjectId(),
+                  area: area.name,
+                  device: device,
+                  action: inside,
+                  timestamp: Date.now()
+                });
+                notifyCompany(company, textMail);
+    
+                history.save().catch(err => {console.log(err)});
+              }
+            }
+
+            console.log(isNotified)
+            console.log(textMail);
+
+            latLngs = [];
+            lats = [];
+            longs = [];
           });
-
-          var wtf = classifyPoint(latLngs ,[lat, lng]);
-          
-          if(!isNotified.includes(device)) {
-            isNotified.push(device)
-            isNotified[device] = [];
-          }
-
-
-
-          if( wtf == -1 ){
-            textMail = device + "[" + device_name + "]" + " is now inside geofence  " + area.name;
-            console.log("HERE -- 1")
-            inside = true;
-
-            console.log("HERE -- 2 -> ADDING " + device + " to  " + area.name);
-            Area.findOneAndUpdate({name: area.name}, {$push: {devices: device}}).then( res => {
-              console.log("HERE -- 3")
-              console.log(res);
-            })
-            .catch(err => {
-                console.log(err);
-            });
-
-            if(!isNotified[device].includes(area.name)) {
-              isNotified[device].push(area.name);
-              var history = new History({
-                _id: mongoose.Types.ObjectId(),
-                area: area.name,
-                device: device,
-                action: inside,
-                timestamp: Date.now()
-              });
-              notifyCompany(company, textMail);
-  
-              history.save().catch(err => {console.log(err)});
-            }
-          } else {
-            textMail = device + "[" + device_name + "]" + " is now outside geofence  " + area.name;
-            inside = false;
-
-
-            Area.findOneAndUpdate({name: area.name}, {$pull: {devices: device}})
-            .catch(err => {
-                console.log(err);
-            });
-
-            if(isNotified[device].includes(area.name)) { 
-              isNotified[device].splice(isNotified[device].indexOf(area.name), 1); 
-              var history = new History({
-                _id: mongoose.Types.ObjectId(),
-                area: area.name,
-                device: device,
-                action: inside,
-                timestamp: Date.now()
-              });
-              notifyCompany(company, textMail);
-  
-              history.save().catch(err => {console.log(err)});
-            }
-          }
-
-          console.log(isNotified)
-          console.log(textMail);
-
-           latLngs = [];
-           lats = [];
-           longs = [];
-        });
     });
   })
   .catch(err => {console.log(err)});
