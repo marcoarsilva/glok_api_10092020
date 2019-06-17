@@ -160,10 +160,7 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
               inside = false;
 
 
-              Area.findOneAndUpdate({name: area.name}, {$pull: {devices: device}})
-              .catch(err => {
-                  console.log(err);
-              });
+       
 
               if(isNotified[device].includes(area.name)) { 
                 isNotified[device].splice(isNotified[device].indexOf(area.name), 1); 
@@ -175,6 +172,11 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
                   timestamp: Date.now()
                 });
                 notifyCompany(company, textMail);
+                console.log("HERE -- 2 -> REMOVING " + device + " to  " + area.name);
+                Area.findOneAndUpdate({name: area.name}, {$pull: {devices: device}})
+                .catch(err => {
+                    console.log(err);
+                });
     
                 history.save().catch(err => {console.log(err)});
               }
