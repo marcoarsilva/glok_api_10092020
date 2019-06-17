@@ -54,10 +54,7 @@ function getDecimalCoord(sigfoxFrame) {
   return degrees + minutes;
 }
 function batteryToPercent(battery) {
-  if (battery.length <= 3){
     
-    var h = parseInt(battery) + parseInt(voltage);
-    var p = parseFloat((h*15)/1000); 
     
     if(p > 4.1) {
       p = 100
@@ -69,9 +66,8 @@ function batteryToPercent(battery) {
     }
   
     return p
-  } 
-  return "ERR"
-}
+} 
+
 function temperatureToPercent(temp) {
   return parseFloat((temp*15)/100)
 }
