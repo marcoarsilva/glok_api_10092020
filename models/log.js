@@ -6,6 +6,8 @@ var logSchema = mongoose.Schema({
     lng: String,
     bat: String,
     temp: String,
+    status: String,
+    speed: String,
     timestamp: mongoose.Schema.Types.Date
 });
 
