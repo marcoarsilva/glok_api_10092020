@@ -66,7 +66,9 @@ router.post('/', methods.ensureToken, methods.areaExists , function(req, res, ne
         _id: mongoose.Types.ObjectId(),
         company: req.payload.user.company,
         name: req.body.name,
-        points: req.body.points
+        points: req.body.points,
+        devices: (req.body.areas != undefined) ? req.body.devices : []
+
     });
  
 

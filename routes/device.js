@@ -35,7 +35,7 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
 router.get('/:device', methods.ensureToken ,function(req, res, next) {
     if(!req.payload.user.isSuperAdmin){
       Device
-      .find({company: req.payload.user.company, device: req.params.device})
+      .findOne({company: req.payload.user.company, device: req.params.device})
       .then(device => {
           res.send(device);
       })
@@ -47,7 +47,7 @@ router.get('/:device', methods.ensureToken ,function(req, res, next) {
       })   
     } else {
       Device
-      .find({device: req.params.device})
+      .findOne({device: req.params.device})
       .then(device => {
           res.send(device);
       })
