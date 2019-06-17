@@ -53,9 +53,7 @@ function getDecimalCoord(sigfoxFrame) {
   minutes = Math.round(minutes * 10000) / 10000;
   return degrees + minutes;
 }
-function batteryToPercent(battery) {
-    
-    
+function batteryToPercent(p) {
     if(p > 4.1) {
       p = 100
     } else if(p > 2.54) {
