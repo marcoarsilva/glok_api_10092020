@@ -11,61 +11,20 @@ var History = require('../models/history');
 
 module.exports = router;
 
-router.get('/:area' , methods.ensureToken ,function(req, res, next) {
+
+
+router.get('/areas' , (req, res, next) => {
+    console.log(req.body);
     History
-        .find({area: req.params.area})
-        .sort({_id:-1})  
+        .find({area: {$in: req.body.areas}})
         .then(result => {
             res.send(result);
-        })
-        .catch( err => {
-            res.status(500).json({
-                message: 'Server error',
-                error: err
-            });
-        })
-});
-
-router.get('/byDevice/:device' , methods.ensureToken ,function(req, res, next) {
-    History
-        .find({device: req.params.device})
-        .sort({_id:-1})  
-        .then(result => {
-            res.send(result);
-        })
-        .catch( err => {
-            res.status(500).json({
-                message: 'Server error',
-                error: err
-            });
-        })
-});
-
-router.get('/byDevice/:device/:date1/:date2' , methods.ensureToken ,function(req, res, next) {
-    var startDate = moment(new Date(req.params.date1)) 
-    var endDate   = moment(new Date(req.params.date2))
-
-
-    History
-    .find({device: req.params.device, timestamp: { '$gte': startDate, '$lte': endDate }})
-    .then(result => {
-        res.send(result);
-    })
-    .catch( err => {
-        console.log(err);
-        res.status(500).json({
-            message: 'Server error',
-            error: err
         });
-    })
 });
-
-router.get('/:area/:date1/:date2' , methods.ensureToken ,function(req, res, next) {
-    var startDate = moment(new Date(req.params.date1)) 
-    var endDate   = moment(new Date(req.params.date2))
-    
+router.post('/areas' , methods.ensureToken ,function(req, res, next) {
     History
-        .find({area: req.params.area, timestamp: { '$gte': startDate, '$lte': endDate }})
+        .find({area: {$in: req.body.areas}})
+        .sort({_id:-1})
         .then(result => {
             res.send(result);
         })
@@ -76,9 +35,25 @@ router.get('/:area/:date1/:date2' , methods.ensureToken ,function(req, res, next
             });
         })
 });
-router.get('/:area/:device' , methods.ensureToken ,function(req, res, next) { 
+router.post('/:area/:date1/:date2' , methods.ensureToken ,function(req, res, next) {
+    var startDate = moment(new Date(req.params.date1))
+    var endDate   = moment(new Date(req.params.date2))
+
     History
-        .find({area: req.params.area, device: req.params.device})
+        .find({area: {$in: req.body.areas}, timestamp: { '$gte': startDate, '$lte': endDate }})
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+router.post('/:area/:device' , methods.ensureToken ,function(req, res, next) {
+    History
+        .find({area: {$in: req.body.areas}, device: req.params.device})
         .then(result => {
             res.send(result);
         })
@@ -90,9 +65,9 @@ router.get('/:area/:device' , methods.ensureToken ,function(req, res, next) {
         })
 });
 router.get('/:area/:date1/:date2/:device' , methods.ensureToken ,function(req, res, next) {
-    var startDate = moment(new Date(req.params.date1)) 
+    var startDate = moment(new Date(req.params.date1))
     var endDate   = moment(new Date(req.params.date2))
-    
+
     History
         .find({area: req.params.area, timestamp: { '$gte': startDate, '$lte': endDate }, device: req.params.device})
         .then(result => {
@@ -105,10 +80,131 @@ router.get('/:area/:date1/:date2/:device' , methods.ensureToken ,function(req, r
             });
         })
 });
+
+
+router.post('/byDevice' , methods.ensureToken ,function(req, res, next) {
+    History
+        .find({device: {$in: req.body.devices}})
+        .sort({_id:-1})
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+router.get('/areas' , (req, res, next) => {
+    console.log(req.body);
+    History
+        .find({area: {$in: req.body.areas}})
+        .then(result => {
+            res.send(result);
+        });
+});
+router.post('/areas' , methods.ensureToken ,function(req, res, next) {
+    History
+        .find({area: {$in: req.body.areas}})
+        .sort({_id:-1})
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+router.post('/:area/:date1/:date2' , methods.ensureToken ,function(req, res, next) {
+    var startDate = moment(new Date(req.params.date1))
+    var endDate   = moment(new Date(req.params.date2))
+
+    History
+        .find({area: {$in: req.body.areas}, timestamp: { '$gte': startDate, '$lte': endDate }})
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+router.post('/:area/:device' , methods.ensureToken ,function(req, res, next) {
+    History
+        .find({area: {$in: req.body.areas}, device: req.params.device})
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+router.post('/:area/:date1/:date2/:device' , methods.ensureToken ,function(req, res, next) {
+    var startDate = moment(new Date(req.params.date1))
+    var endDate   = moment(new Date(req.params.date2))
+
+    History
+        .find({area: {$in: req.body.areas}, timestamp: { '$gte': startDate, '$lte': endDate }, device: req.params.device})
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+
+
+router.post('/byDevice' , methods.ensureToken ,function(req, res, next) {
+    History
+        .find({device: {$in: req.body.devices}})
+        .sort({_id:-1})
+        .then(result => {
+            res.send(result);
+        })
+        .catch( err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
+});
+router.post('/byDeviceAndDate' , methods.ensureToken ,function(req, res, next) {
+    console.log('HERE');
+    var startDate = moment(new Date(req.body.date1))
+    var endDate   = moment(new Date(req.body.date2))
+
+
+    History
+    .find({device: {$in: req.body.devices}, timestamp: { '$gte': startDate, '$lte': endDate }})
+    .then(result => {
+        res.send(result);
+    })
+    .catch( err => {
+        console.log(err);
+        res.status(500).json({
+            message: 'Server error',
+            error: err
+        });
+    })
+});
+
+
+
 router.delete('/:id' , methods.ensureToken ,function(req, res, next) {
     History
         .findByIdAndRemove(req.params._id)
-        .sort({_id:-1})  
+        .sort({_id:-1})
         .then(result => {
             res.send(result);
         })
