@@ -13,7 +13,7 @@ var User = require('../models/user')
 var conf = require('../configs.js');
 var isNotified = [];
 
-    
+
 function bin2dec(bin){
   return parseInt(bin, 2);
 }
@@ -31,7 +31,7 @@ function getBinaryFrame(payload) {
     return null;
   }
   return binaryString;
-  
+
 }
 function getBinaryFromHex(byte) {
   var num = Number(parseInt(byte, 16));
@@ -56,15 +56,14 @@ function getDecimalCoord(sigfoxFrame) {
 function batteryToPercent(p) {
     if(p > 4.1) {
       p = 100
-    } else if(p > 2.54) {
-      let bat =(((p - 2.54) * 100) / 1.66).toFixed(0);
-      bat > 100 ? p = 100 : p = bat;
+    } else if(p > 2.5) {
+      p = 0
     } else {
-        p = 0;
+      p = p * 100 / 4.1
     }
-  
+
     return p
-} 
+}
 
 function temperatureToPercent(temp) {
   return parseFloat((temp*15)/100)
@@ -82,9 +81,9 @@ function addToDeviceList(device, lat, lng, bat, temp){
       var newDevice = new Device({
         _id: mongoose.Types.ObjectId(),
         device: device,
-        lat: lat, 
-        lng: lng, 
-        bat: bat, 
+        lat: lat,
+        lng: lng,
+        bat: bat,
         temp: temp,
         last_seen: Date.now()
       });
@@ -94,7 +93,7 @@ function addToDeviceList(device, lat, lng, bat, temp){
         console.log('Added ' + result);
       }).catch(err => console.log(err));
     }
- 
+
   })
   .catch(err =>{console.log(err)});
 }
@@ -119,7 +118,7 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
             });
 
             var wtf = classifyPoint(latLngs ,[lat, lng]);
-            
+
             if(!isNotified.includes(device)) {
               isNotified.push(device)
               isNotified[device] = [];
@@ -132,7 +131,7 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
               console.log("HERE -- 1")
               inside = true;
 
-        
+
 
               if(!isNotified[device].includes(area.name)) {
                 isNotified[device].push(area.name);
@@ -152,7 +151,7 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
                 .catch(err => {
                     console.log(err);
                 });
-    
+
                 history.save().catch(err => {console.log(err)});
               }
             } else {
@@ -160,10 +159,10 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
               inside = false;
 
 
-       
 
-              if(isNotified[device].includes(area.name)) { 
-                isNotified[device].splice(isNotified[device].indexOf(area.name), 1); 
+
+              if(isNotified[device].includes(area.name)) {
+                isNotified[device].splice(isNotified[device].indexOf(area.name), 1);
                 var history = new History({
                   _id: mongoose.Types.ObjectId(),
                   area: area.name,
@@ -177,7 +176,7 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
                 .catch(err => {
                     console.log(err);
                 });
-    
+
                 history.save().catch(err => {console.log(err)});
               }
             }
@@ -194,7 +193,7 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
   .catch(err => {console.log(err)});
 }
 function notifyCompany(company, textMail) {
-  
+
   User.find({company: company}).then( users => {
     users.forEach( user => {
       var mail = {
@@ -211,13 +210,13 @@ function notifyCompany(company, textMail) {
           console.log(info);
     });
     })
-  })  
+  })
 }
 function voltagesum(battery, voltage) {
   var y = battery.toString;
       if (y.length <= 3){
           var h = parseInt(battery) + parseInt(voltage);
-          var p = parseFloat((h*15)/1000); 
+          var p = parseFloat((h*15)/1000);
           return p;
       }
   return "0"
@@ -276,7 +275,7 @@ router.get('/:device/:limit', methods.ensureToken ,function(req, res, next) {
   })
 });
 router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, next) {
-  var startDate = moment(new Date(req.params.date1)) 
+  var startDate = moment(new Date(req.params.date1))
   var endDate   = moment(new Date(req.params.date2))
 
   Sigfox.find({"device": req.params.device,"time": { '$gte': startDate, '$lte': endDate }}).then(result=> {
@@ -291,7 +290,7 @@ router.post('/', function(req, res, next) {
   var framePattern = /(.{1})(.{31})(.{1})(.{31})(.{8})(.{8})(.{8})(.{4})(.{4})/;
   var binaryFrame = getBinaryFrame(req.body.payload);
   var frame = framePattern.exec(binaryFrame);
-  
+
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
     device: req.body.device,
@@ -318,12 +317,12 @@ router.post('/', function(req, res, next) {
       var framePattern = /(.{1})(.{31})(.{1})(.{31})(.{8})(.{8})(.{8})(.{4})(.{4})/;
       var binaryFrame = getBinaryFrame(req.body.payload);
       var frame = framePattern.exec(binaryFrame);
-    
+
       var lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
       var lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
       addToDeviceList(req.body.device, lat, lng,  batteryToPercent(req.body.battery), temperatureToPercent(req.body.temp), req.body.time);
     })
-    .catch(err => { 
+    .catch(err => {
       console.log(err);
       res.status(500).json({
           message: 'Couldn\'t save entry',
