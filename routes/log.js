@@ -325,7 +325,7 @@ router.post('/', function(req, res, next) {
 
       var lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
       var lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
-      addToDeviceList(req.body.device, lat, lng,  batteryToPercent(req.body.battery), temperatureToPercent(req.body.temp), req.body.time);
+      addToDeviceList(req.body.device, lat, lng,  batteryToPercent(result.battery), temperatureToPercent(req.body.temp), req.body.time);
     })
     .catch(err => {
       console.log(err);
