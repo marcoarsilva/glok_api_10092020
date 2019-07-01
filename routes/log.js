@@ -289,9 +289,6 @@ router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, nex
   });
 });
 router.post('/', function(req, res, next) {
-
-
-
   var framePattern = /(.{1})(.{31})(.{1})(.{31})(.{8})(.{8})(.{8})(.{4})(.{4})/;
   var binaryFrame = getBinaryFrame(req.body.payload);
   var frame = framePattern.exec(binaryFrame);
@@ -319,13 +316,10 @@ router.post('/', function(req, res, next) {
           company_created: newEntry
       });
 
-      var framePattern = /(.{1})(.{31})(.{1})(.{31})(.{8})(.{8})(.{8})(.{4})(.{4})/;
-      var binaryFrame = getBinaryFrame(req.body.payload);
-      var frame = framePattern.exec(binaryFrame);
 
       var lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
       var lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
-      addToDeviceList(req.body.device, lat, lng,  batteryToPercent(result.battery), temperatureToPercent(req.body.temp), req.body.time);
+      addToDeviceList(req.body.device, lat, lng,  batteryToPercent(batCalculation(frame[5], frame[7])), temperatureToPercent(req.body.temp), req.body.time);
     })
     .catch(err => {
       console.log(err);
