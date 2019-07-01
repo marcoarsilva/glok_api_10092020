@@ -59,7 +59,7 @@ function batteryToPercent(p) {
 
     if(p > 4.1) {
       p = 100
-    } else if(p > 2.5) {
+    } else if(p < 2.5) {
       p = 0
     } else {
       p = p * 100 / 4.1
