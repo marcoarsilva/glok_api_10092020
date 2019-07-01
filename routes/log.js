@@ -67,7 +67,7 @@ function batteryToPercent(p) {
 
   console.log('returns -> ' + p );
 
-  return p
+  return parseFloat(p).toFixed(1)
 }
 
 function temperatureToPercent(temp) {
