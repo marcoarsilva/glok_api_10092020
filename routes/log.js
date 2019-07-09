@@ -296,7 +296,7 @@ router.post('/', function(req, res, next) {
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
     device: req.body.device,
-    payload: req.body.payload,
+    payload: 'deprecated',
     time: Date.now(),
     lat: req.body.lat,
     lng: req.body.lng,
