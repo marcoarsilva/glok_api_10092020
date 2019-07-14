@@ -14,30 +14,40 @@ router.post('/' ,function(req, res, next) {
   User
       .findOne({username: req.body.username})
       .then(result => {
-        if(result.isSuperAdmin)
-          permisson = "Root"
-        else if(result.isAdmin)
-         permisson = "Admin"
-        else 
-          permisson = "User"
+     if(result) {
+         if(result.isSuperAdmin)
+             permisson = "Root"
+         else if(result.isAdmin)
+             permisson = "Admin"
+         else
+             permisson = "User"
 
-        if(p_username === result.username && p_password === cipher.decrypt(result.password)){
-            jwt.sign({user: result}, '08dummIO@',(err, token) => {
-                res.send({
-                  ok: true,
-                  message: "Login successful",
-                  token: token,
-                  permisson: permisson
-                })
-              })
-           }else {
-            res.send({
-              ok: false,
-              message: "Username or password incorrect"
+
+         if(p_username === result.username && p_password === cipher.decrypt(result.password)){
+             jwt.sign({user: result}, '08dummIO@',(err, token) => {
+                 res.send({
+                     ok: true,
+                     message: "Login successful",
+                     token: token,
+                     permisson: permisson
+                 })
              })
-           }
+         } else {
+             res.send({
+                 ok: false,
+                 message: "Username or password incorrect"
+             })
+         }
+     } else {
+         res.send({
+             ok: false,
+             message: "Username or password incorrect"
+         })
+     }
+
+
       })
-      .catch(err => { 
+      .catch(err => {
           console.log(err);
       });
 

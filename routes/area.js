@@ -44,14 +44,14 @@ router.delete('/:id', methods.ensureToken,function(req, res, next) {
             });
 
 
-            Company.findOneAndUpdate({_id: req.payload.user.company}, 
+            Company.findOneAndUpdate({_id: req.payload.user.company},
                 {$pull: {areas: area.name}})
             .then(company => {
                 console.log(company);
             }).catch(err => {
                 console.log(err)
             })
-    
+
         })
         .catch(err => {
             res.status(404).json({
@@ -68,9 +68,8 @@ router.post('/', methods.ensureToken, methods.areaExists , function(req, res, ne
         name: req.body.name,
         points: req.body.points,
         devices: (req.body.areas != undefined) ? req.body.devices : []
-
     });
- 
+
 
     area
         .save()
@@ -89,7 +88,7 @@ router.post('/', methods.ensureToken, methods.areaExists , function(req, res, ne
                 area_created: area
             });
         })
-        .catch(err => { 
+        .catch(err => {
             console.log(err);
             res.status(500).json({
                 message: 'Couldn\'t create area',
@@ -97,7 +96,7 @@ router.post('/', methods.ensureToken, methods.areaExists , function(req, res, ne
             });
         });
 });
- 
+
 router.put('/:id', methods.ensureToken, function(req, res, next) {
     var newArea = new Area({
         name: req.body.name,
@@ -113,7 +112,7 @@ router.put('/:id', methods.ensureToken, function(req, res, next) {
                 message: 'Successfully updated area',
                 area_created: newArea
             });
-        })    
+        })
 });
-  
+
 module.exports = router;
