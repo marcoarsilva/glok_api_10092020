@@ -280,14 +280,15 @@ router.get('/:device/:limit', methods.ensureToken ,function(req, res, next) {
   })
 });
 router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, next) {
-  var startDate = moment(new Date(req.params.date1))
-  var endDate   = moment(new Date(req.params.date2))
+  var startDate = moment(new Date(req.params.date1)).format();
+  var endDate   = moment(new Date(req.params.date2)).format();
+
 
   Sigfox.find({"device": req.params.device,"time": { '$gte': startDate, '$lte': endDate }}).then(result=> {
-    console.log(result);
     res.send(result);
   });
 });
+
 router.post('/', function(req, res, next) {
   var framePattern = /(.{1})(.{31})(.{1})(.{31})(.{8})(.{8})(.{8})(.{4})(.{4})/;
   var binaryFrame = getBinaryFrame(req.body.payload);

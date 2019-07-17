@@ -34,6 +34,7 @@ router.get('/:id', methods.ensureToken,function(req, res, next) {
         })
 });
 
+
 router.delete('/:id', methods.ensureToken,function(req, res, next) {
     Area
         .findByIdAndRemove(req.params.id)
