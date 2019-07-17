@@ -73,7 +73,7 @@ function batteryToPercent(p) {
 function temperatureToPercent(temp) {
   return parseFloat((temp*15)/100)
 }
-function addToDeviceList(device, lat, lng, bat, temp){
+function addToDeviceList(device, lat, lng, bat, temp, speed){
   Device.find({device: device})
   .then(result => {
     if(result != ""){
@@ -90,6 +90,7 @@ function addToDeviceList(device, lat, lng, bat, temp){
         lng: lng,
         bat: bat,
         temp: temp,
+        speed: speed,
         last_seen: Date.now()
       });
 
@@ -320,7 +321,7 @@ router.post('/', function(req, res, next) {
 
       var lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
       var lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
-      addToDeviceList(req.body.device, lat, lng,  batteryToPercent(batCalculation(frame[5], frame[7])), temperatureToPercent(req.body.temp), req.body.time);
+      addToDeviceList(req.body.device, lat, lng,  batteryToPercent(batCalculation(frame[5], frame[7])), temperatureToPercent(req.body.temp), req.body.time, bin2dec(frame[9])* 5 * 1.6);
     })
     .catch(err => {
       console.log(err);

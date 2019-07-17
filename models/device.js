@@ -7,6 +7,7 @@ var deviceSchema = mongoose.Schema({
     name: String,
     lat: String,
     lng: String,
+    speed: String,
     bat: String,
     temp: String,
     mot: mongoose.Schema.Types.Date,
