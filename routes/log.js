@@ -305,8 +305,8 @@ router.post('/', function(req, res, next) {
     battery: batCalculation(frame[5], frame[7]),
     voltage: batCalculation(frame[5], frame[7]),
     temp: temperatureToPercent(bin2dec(frame[6])),
-    status: bin2dec(frame[8]),
-    speed: bin2dec(frame[9])*5
+    status: frame[8],
+    speed: bin2dec(frame[9])* 5 * 1.6
   });
 
   newEntry
