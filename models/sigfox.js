@@ -12,6 +12,8 @@ var sigfox = mongoose.Schema({
     voltage: String,
     acqspeed: String,
     temp:String,
+    status: String,
+    speed: String
 });
 
 module.exports = mongoose.model('Sigfox', sigfox);
