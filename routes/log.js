@@ -117,7 +117,7 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
                textMail = device + "[" + device_name + "]" + " is now inside geofence  " + area.name;
 
                Area.findByIdAndUpdate(area._id, {$push: {devices: device}}).then(r  => console.log('ADDING' + r.devices));
-               //notifyCompany(company, textMail);
+               notifyCompany(company, textMail);
 
                new History({
                  _id: mongoose.Types.ObjectId(),
