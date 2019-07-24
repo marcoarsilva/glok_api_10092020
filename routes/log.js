@@ -11,8 +11,6 @@ var Area = require('../models/area');
 var History = require('../models/history');
 var User = require('../models/user')
 var conf = require('../configs.js');
-var isNotified = [];
-
 
 function bin2dec(bin){
   return parseInt(bin, 2);
@@ -54,9 +52,6 @@ function getDecimalCoord(sigfoxFrame) {
   return degrees + minutes;
 }
 function batteryToPercent(p) {
-
-    console.log('enters -> ' + p );
-
     if(p > 4.1) {
       p = 100
     } else if(p < 2.5) {
@@ -64,12 +59,8 @@ function batteryToPercent(p) {
     } else {
       p = p * 100 / 4.1
     }
-
-  console.log('returns -> ' + p );
-
   return parseFloat(p).toFixed(1)
 }
-
 function temperatureToPercent(temp) {
   return parseFloat((temp*15)/100)
 }
@@ -96,7 +87,6 @@ function addToDeviceList(device, lat, lng, bat, temp, speed){
 
       newDevice.save().then(result => {
         isInsideGeofence(result.device, result.name ?  result.name: result.device , result.company, result.lat, result.lng);
-        console.log('Added ' + result);
       }).catch(err => console.log(err));
     }
 
@@ -104,96 +94,64 @@ function addToDeviceList(device, lat, lng, bat, temp, speed){
   .catch(err =>{console.log(err)});
 }
 function isInsideGeofence(device, device_name ,company, lat, lng) {
-  var latLngs = [];
-  var lats = [];
-  var longs = [];
-  var inside = false;
   var textMail = '';
 
-  Company.findOne({_id: company}).then(companyItem => {
-    console.log(companyItem)
+  Company.findById(company).then(companyItem => {
     companyItem.areas.forEach(areas => {
-      console.log(areas)
-      if(areas != " ")
-          Area.findOne({name: areas}).then( area => {
-            console.log(area);
+        Area.findOne({name: areas}).then( area => {
+          var latLngs = [];
+
+          if(area != null){
             area.points.forEach( point => {
               latLngs.push([point.lat,point.lng]);
-              lats.push([point.lat]);
-              longs.push([point.lng]);
             });
 
-            var wtf = classifyPoint(latLngs ,[lat, lng]);
+            // Returns -1 if coordinates are inside polygon
+            const currentState = classifyPoint(latLngs ,[lat, lng]);
 
-            if(!isNotified.includes(device)) {
-              isNotified.push(device)
-              isNotified[device] = [];
-            }
+           if (currentState == -1){
 
+             // Device is not already inside
+             if(!area.devices.includes(device)) {
+               console.log(device + ' is INSIDE ' + area.name);
+               textMail = device + "[" + device_name + "]" + " is now inside geofence  " + area.name;
 
+               Area.findByIdAndUpdate(area._id, {$push: {devices: device}}).then(r  => console.log('ADDING' + r.devices));
+               //notifyCompany(company, textMail);
 
-            if( wtf == -1 ){
-              textMail = device + "[" + device_name + "]" + " is now inside geofence  " + area.name;
-              console.log("HERE -- 1")
-              inside = true;
+               new History({
+                 _id: mongoose.Types.ObjectId(),
+                 area: area.name,
+                 device: device,
+                 action: true,
+                 timestamp: Date.now()
+               }).save();
+             }
 
+             console.log( 'GEOFENCE CHECK - ' + device + ' || ' + area.name + ' = '  + 'INSIDE');
+           } else if(currentState == 1){
 
+             // Device was inside
+             if(area.devices.includes(device)) {
+               console.log(device + ' is OUTSIDE ' + area.name);
+               textMail = device + "[" + device_name + "]" + " is now outside geofence  " + area.name;
 
-              if(!isNotified[device].includes(area.name)) {
-                isNotified[device].push(area.name);
-                var history = new History({
-                  _id: mongoose.Types.ObjectId(),
-                  area: area.name,
-                  device: device,
-                  action: inside,
-                  timestamp: Date.now()
-                });
-                notifyCompany(company, textMail);
-                console.log("HERE -- 2 -> ADDING " + device + " to  " + area.name);
-                Area.findOneAndUpdate({name: area.name}, {$push: {devices: device}}).then( res => {
-                  console.log("HERE -- 3")
-                  console.log(res);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+               Area.findByIdAndUpdate(area._id, {$pull: {devices: device}}).then(r  => console.log('REMOVING' + r.devices));
+               notifyCompany(company, textMail);
 
-                history.save().catch(err => {console.log(err)});
-              }
-            } else {
-              textMail = device + "[" + device_name + "]" + " is now outside geofence  " + area.name;
-              inside = false;
+               new History({
+                 _id: mongoose.Types.ObjectId(),
+                 area: area.name,
+                 device: device,
+                 action: false,
+                 timestamp: Date.now()
+               }).save();
+             }
 
-
-
-
-              if(isNotified[device].includes(area.name)) {
-                isNotified[device].splice(isNotified[device].indexOf(area.name), 1);
-                var history = new History({
-                  _id: mongoose.Types.ObjectId(),
-                  area: area.name,
-                  device: device,
-                  action: inside,
-                  timestamp: Date.now()
-                });
-                notifyCompany(company, textMail);
-                console.log("HERE -- 2 -> REMOVING " + device + " to  " + area.name);
-                Area.findOneAndUpdate({name: area.name}, {$pull: {devices: device}})
-                .catch(err => {
-                    console.log(err);
-                });
-
-                history.save().catch(err => {console.log(err)});
-              }
-            }
-
-            console.log(isNotified)
-            console.log(textMail);
-
-            latLngs = [];
-            lats = [];
-            longs = [];
-          });
+             console.log( 'GEOFENCE CHECK - ' + device + ' || ' + area.name + ' = '  + 'OUTSIDE');
+           }
+          }
+        });
     });
   })
   .catch(err => {console.log(err)});
@@ -212,30 +170,10 @@ function notifyCompany(company, textMail) {
       conf.mailTransporter.sendMail(mail, (err, info) => {
         if(err)
           console.log(err)
-        else
-          console.log(info);
     });
     })
   })
 }
-function voltagesum(battery, voltage) {
-  var y = battery.toString;
-      if (y.length <= 3){
-          var h = parseInt(battery) + parseInt(voltage);
-          var p = parseFloat((h*15)/1000);
-          return p;
-      }
-  return "0"
-  }
-
-
-function batterypayload(payload) {
-  var binary = parseInt(payload, 16);
-  return (binary*15)/1000;
-}
-
-
-
 
 router.get('/', methods.ensureToken ,function(req, res, next) {
   Sigfox
@@ -315,12 +253,13 @@ router.post('/', function(req, res, next) {
     .then(result => {
       res.status(201).json({
           message: req.body.device + ' entry successfully added',
-          company_created: newEntry
+          device_created: result
       });
 
 
       var lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
       var lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
+
       addToDeviceList(req.body.device, lat, lng,  batteryToPercent(batCalculation(frame[5], frame[7])), temperatureToPercent(req.body.temp), req.body.time, bin2dec(frame[9])* 5 * 1.6);
     })
     .catch(err => {
