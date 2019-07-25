@@ -248,6 +248,10 @@ router.post('/', function(req, res, next) {
     speed: bin2dec(frame[9])* 5 * 1.6
   });
 
+
+  console.log('Payload > ' + req.body.payload);
+  console.log(req.body.device + ' [Speed] > ' + bin2dec(frame[9])* 5 * 1.6);
+
   newEntry
     .save()
     .then(result => {
