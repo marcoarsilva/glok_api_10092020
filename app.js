@@ -16,6 +16,7 @@ var deviceRouter = require('./routes/device');
 var authRouter = require('./routes/auth');
 var areaRouter = require('./routes/area');
 var historyRouter = require('./routes/history');
+var analyticRouter = require('./routes/analytic');
 
 
 
@@ -51,6 +52,7 @@ app.use('/api/areaLog', historyRouter );
 app.use('/api/device', deviceRouter);
 app.use('/api/area', areaRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/analytic', analyticRouter);
 
 
 // catch 404 and forward to error handler

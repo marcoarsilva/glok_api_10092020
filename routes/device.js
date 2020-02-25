@@ -3,6 +3,9 @@ var router = express.Router();
 var methods = require("../methods");
 var moment = require('moment');
 var Device = require('../models/device');
+var deviceRecord = require('../models/deviceRecord');
+var mongoose = require('mongoose');
+
 
 router.get('/', methods.ensureToken ,function(req, res, next) {
   if(!req.payload.user.isSuperAdmin){
@@ -16,7 +19,7 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
             message: 'Server error',
             error: err
         });
-    })   
+    })
   } else {
     Device
     .find({})
@@ -28,7 +31,7 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
             message: 'Server error',
             error: err
         });
-    })   
+    })
   }
 });
 
@@ -44,7 +47,7 @@ router.get('/:device', methods.ensureToken ,function(req, res, next) {
               message: 'Server error',
               error: err
           });
-      })   
+      })
     } else {
       Device
       .findOne({device: req.params.device})
@@ -56,15 +59,15 @@ router.get('/:device', methods.ensureToken ,function(req, res, next) {
               message: 'Server error',
               error: err
           });
-      })   
+      })
     }
   });
 
 router.get('/mot/:date1/:date2', methods.ensureToken ,function(req, res, next) {
     console.log()
-    var startDate = moment(new Date(req.params.date1)) 
+    var startDate = moment(new Date(req.params.date1))
     var endDate   = moment(new Date(req.params.date2))
-    
+
     if(req.payload.user.isSuperAdmin){
         Device
         .find({mot: { '$gte': startDate, '$lte': endDate }})
@@ -76,7 +79,7 @@ router.get('/mot/:date1/:date2', methods.ensureToken ,function(req, res, next) {
                 message: 'Server error',
                 error: err
             });
-        })   
+        })
     } else {
         Device
         .find({company: req.payload.user.company, mot: { '$gte': startDate, '$lte': endDate }})
@@ -88,7 +91,7 @@ router.get('/mot/:date1/:date2', methods.ensureToken ,function(req, res, next) {
                 message: 'Server error',
                 error: err
             });
-        })   
+        })
     }
 });
 router.put('/:id',methods.ensureToken ,function(req, res, next) {
@@ -98,11 +101,11 @@ router.put('/:id',methods.ensureToken ,function(req, res, next) {
             mot: req.body.mot,
             notes: req.body.notes
           });
-    
+
         Device
             .findOneAndUpdate({_id: req.params.id}, newDevice)
             .then(result => {
-                console.log(result);
+                logDeviceChange(req.payload.user._id,result._id, 'generic')
                 res.status(201).json({
                     message: 'Successfully updated device',
                     device_updated: newDevice
@@ -112,7 +115,7 @@ router.put('/:id',methods.ensureToken ,function(req, res, next) {
                     message: 'Server error',
                     error: err
                 });
-            })    
+            })
     } else {
         var newDevice = new Device({
             name: req.body.name,
@@ -120,11 +123,12 @@ router.put('/:id',methods.ensureToken ,function(req, res, next) {
             notes: req.body.notes,
             company: req.body.company
           });
-    
+
         Device
             .findOneAndUpdate({_id: req.params.id}, newDevice)
             .then(result => {
                 console.log(result);
+                logDeviceChange(req.payload.user._id,result._id, 'generic');
                 res.status(201).json({
                     message: 'Successfully updated device',
                     device_updated: newDevice
@@ -134,9 +138,9 @@ router.put('/:id',methods.ensureToken ,function(req, res, next) {
                     message: 'Server error',
                     error: err
                 });
-            })   
+            })
     }
- 
+
 });
 router.delete('/:id', methods.ensureToken ,function(req, res, next) {
     if(req.payload.user.isSuperAdmin){
@@ -159,12 +163,27 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
                 message: 'Server error',
                 error: err
             });
-        })  
+        })
     } else {
         res.status(403).json({
             message: 'You dont have enough permissons',
         });
-    } 
+    }
   });
+
+
+const logDeviceChange = (user, device , modifier) => {
+    var newLog = new deviceRecord({
+        _id: mongoose.Types.ObjectId(),
+        user: user,
+        device: device,
+        modifier: modifier,
+        timestamp: Date.now()
+    });
+
+    newLog.save().then( res => {
+        console.log(res)
+    })
+}
 
 module.exports = router;

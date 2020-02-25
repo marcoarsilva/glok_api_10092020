@@ -6,6 +6,8 @@ var User = require('../models/user');
 var aes256 = require('aes256');
 var key = 'm3k3r1@08dummIO!';
 var cipher = aes256.createCipher(key);
+var conf = require('./../configs');
+
 
 router.post('/changePassword', methods.ensureToken, (req, res, next) => {
     if(req.body.oldPassword == cipher.decrypt(req.payload.user.password)){
@@ -27,28 +29,28 @@ router.post('/changePassword', methods.ensureToken, (req, res, next) => {
         });
     }
 });
-router.get('/resetPassword/:id', methods.ensureToken, (req, res, next) => {
-    if(req.payload.user.isSuperAdmin){
-        User.findOneAndUpdate({_id: req.params.id}, {password: cipher.encrypt('welcome1234')})
-            .then( user => {
-                console.log(user)
+
+
+
+router.post('/resetPassword/', methods.ensureToken, (req, res, next) => {
+    // TODO randomize
+    var resetPsw = 'yHs34C6';
+
+    console.log(req.body.email)
+    User.findOneAndUpdate({email: req.body.email}, {password: cipher.encrypt(resetPsw)})
+        .then( user => {
+                sendMail(user, 'Your password was reset to :'+ resetPsw +'. If you didn’t create this request contact the administrator.')
                 res.status(200).json({
                     message: 'Password updated',
                 })
-                }
-
-            )
-            .catch(err => {
-                    res.status(200).json({
-                        message: 'Server error',
-                        error: err
-                    });
-            })
-    } else {
-        res.status(403).json({
-            message: 'Forbidden',
-        });
-    }
+            }
+        )
+        .catch(err => {
+            res.status(500).json({
+                message: 'Server error',
+                error: err
+            });
+        })
 });
 
 router.get('/', methods.ensureToken, function(req, res, next) {
@@ -173,6 +175,25 @@ router.put('/:id', methods.ensureToken,function(req, res, next) {
         });
 });
 
+router.get('/:id', methods.ensureToken,function(req, res, next) {
+    User
+        .findOne({_id: req.params.id})
+        .then(result => {
+            console.log(result);
+            res.status(201).json({
+                message: 'Successfully found user',
+                user: result
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(404).json({
+                message: 'Couldn\'t found user',
+                error: err
+            });
+        });
+});
+
 router.delete('/:id', methods.ensureToken,function(req, res, next) {
     User
         .findByIdAndRemove(req.params.id)
@@ -191,5 +212,21 @@ router.delete('/:id', methods.ensureToken,function(req, res, next) {
             });
         });
 });
+
+function sendMail(user, textMail) {
+    var mail = {
+        from: "notifications@gloksystems.co.uk",
+        to: user.email,
+        subject: "GLOK update",
+        text: textMail
+    };
+
+    conf.mailTransporter.sendMail(mail, (err, info) => {
+        if(err)
+            console.log(err);
+        else
+            console.log(info);
+    });
+}
 
 module.exports = router;
