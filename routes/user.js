@@ -32,9 +32,9 @@ router.post('/changePassword', methods.ensureToken, (req, res, next) => {
 
 
 
-router.post('/resetPassword/', methods.ensureToken, (req, res, next) => {
+router.post('/resetPassword', (req, res, next) => {
     // TODO randomize
-    var resetPsw = 'yHs34C6';
+    var resetPsw = 'welcome1234';
 
     console.log(req.body.email)
     User.findOneAndUpdate({email: req.body.email}, {password: cipher.encrypt(resetPsw)})
@@ -96,7 +96,8 @@ router.post('/', methods.ensureToken , methods.usernameExists , methods.companyE
             email: req.body.email,
             username: req.body.username,
             password: cipher.encrypt(req.body.password),
-            company: req.body.company
+            company: req.body.company,
+            notification: false
         });
 
         user
@@ -124,7 +125,8 @@ router.post('/', methods.ensureToken , methods.usernameExists , methods.companyE
             email: req.body.email,
             username: req.body.username,
             password: req.body.password,
-            company: req.payload.user.company
+            company: req.payload.user.company,
+            notification: false
         });
 
         user
@@ -148,13 +150,14 @@ router.post('/', methods.ensureToken , methods.usernameExists , methods.companyE
 
 router.put('/:id', methods.ensureToken,function(req, res, next) {
     var newUser = new User({
-        isAdmin: (req.body.isAdmin != undefined) ? req.body.isAdmin : false,
-        isSuperAdmin: (req.body.isSuperAdmin != undefined) ? req.body.isSuperAdmin : false,
+        isAdmin: (req.body.isAdmin !== undefined) ? req.body.isAdmin : false,
+        isSuperAdmin: (req.body.isSuperAdmin !== undefined) ? req.body.isSuperAdmin : false,
         name: req.body.name,
         email: req.body.email,
         username: req.body.username,
         password: req.body.password,
-        company: req.body.company
+        company: req.body.company,
+        notification: (req.body.notification !== undefined) ? req.body.notification : false,
     });
 
     User
