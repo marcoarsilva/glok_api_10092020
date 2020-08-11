@@ -18,12 +18,17 @@ var areaRouter = require('./routes/area');
 var historyRouter = require('./routes/history');
 var analyticRouter = require('./routes/analytic');
 
-
-
 var app = express();
 
-//connect to database
-mongoose.connect(conf.mongodb, {useNewUrlParser: true});
+mongoose.connect( conf.mongodb,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    retryWrites: false
+  }
+)
+.then(() => console.log('Connected'))
+.catch(err => console.log('Couldnt connect to DB', err.stack));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

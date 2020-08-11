@@ -1,16 +1,16 @@
-var express = require('express');
-var router = express.Router();
-var mongoose = require('mongoose');
-var methods = require("../methods");
-var moment = require('moment');
-var classifyPoint = require("robust-point-in-polygon");
-var Sigfox = require('../models/sigfox');
-var Device = require('../models/device');
-var Company = require('../models/company');
-var Area = require('../models/area');
-var History = require('../models/history');
-var User = require('../models/user')
-var conf = require('../configs.js');
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const methods = require("../methods");
+const moment = require('moment');
+const classifyPoint = require("robust-point-in-polygon");
+const Sigfox = require('../models/sigfox');
+const Device = require('../models/device');
+const Company = require('../models/company');
+const Area = require('../models/area');
+const History = require('../models/history');
+const User = require('../models/user')
+const conf = require('../configs.js');
 
 function bin2dec(bin){
   return parseInt(bin, 2);
@@ -209,6 +209,7 @@ router.get('/:device/:limit', methods.ensureToken ,function(req, res, next) {
   .sort({_id:-1})
   .limit(parseInt(req.params.limit))
   .then(result => {
+      console.log(result)
       res.send(result);
   })
   .catch(err => {
@@ -227,19 +228,21 @@ router.get('/:device/:date1/:date2', methods.ensureToken ,function(req, res, nex
     res.send(result);
   });
 });
-
 router.post('/', function(req, res, next) {
   var framePattern = /(.{1})(.{31})(.{1})(.{31})(.{8})(.{8})(.{8})(.{4})(.{4})/;
   var binaryFrame = getBinaryFrame(req.body.payload);
   var frame = framePattern.exec(binaryFrame);
+
+  const lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
+  const lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
 
   var newEntry = new Sigfox({
     _id: mongoose.Types.ObjectId(),
     device: req.body.device,
     payload: 'deprecated',
     time: Date.now(),
-    lat: req.body.lat,
-    lng: req.body.lng,
+    lat: lat,
+    lng: lng,
     acqspeed: req.body.acqspeed,
     battery: batCalculation(frame[5], frame[7]),
     voltage: batCalculation(frame[5], frame[7]),
@@ -259,10 +262,6 @@ router.post('/', function(req, res, next) {
           message: req.body.device + ' entry successfully added',
           device_created: result
       });
-
-
-      var lng = (frame[3] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[4], 2) / Math.pow(10, 6));
-      var lat = (frame[1] === "1" ? -1 : 1) * getDecimalCoord(parseInt(frame[2], 2) / Math.pow(10, 6));
 
       addToDeviceList(req.body.device, lat, lng,  batteryToPercent(batCalculation(frame[5], frame[7])), temperatureToPercent(req.body.temp), req.body.time, bin2dec(frame[9])* 5 * 1.6);
     })

@@ -11,6 +11,7 @@ var mongoose = require('mongoose');
 router.post('/' ,function(req, res, next) {
   let p_username = req.body.username;
   let p_password = req.body.password;
+  let permisson = '';
 
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   var browser = req.headers['user-agent'];
