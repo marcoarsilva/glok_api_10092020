@@ -34,7 +34,8 @@ mongoose.connect( conf.mongodb,
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-//CORS Middleware
+//C
+// ORS Middleware
 app.use(function (req, res, next) {
   //Enabling CORS
   res.header("Content-Type", "application/json");

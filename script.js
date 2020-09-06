@@ -31,10 +31,7 @@ var downForAWeekChecker = schedule.scheduleJob('12 * * *', function(){
 })
 
 
-
-
-
-   function notifyCompany(company, textMail) {
+ function notifyCompany(company, textMail) {
 
     User.find({company: company}).then( users => {
       users.forEach( user => {

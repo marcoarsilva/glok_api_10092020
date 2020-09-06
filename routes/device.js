@@ -34,7 +34,6 @@ router.get('/', methods.ensureToken ,function(req, res, next) {
     })
   }
 });
-
 router.get('/:device', methods.ensureToken ,function(req, res, next) {
     if(!req.payload.user.isSuperAdmin){
       Device
@@ -62,7 +61,6 @@ router.get('/:device', methods.ensureToken ,function(req, res, next) {
       })
     }
   });
-
 router.get('/mot/:date1/:date2', methods.ensureToken ,function(req, res, next) {
     console.log()
     var startDate = moment(new Date(req.params.date1))
@@ -170,7 +168,24 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
         });
     }
   });
+router.put('/tracking/:id', methods.ensureToken, function(req, res, next) {
+  const id = req.params.id;
+  
+  Device.findByIdAndUpdate( id, {notifications: {tracking: req.body.tracking} })
+    .then( device => {
+      logDeviceChange(req.payload.user._id, device._id, 'generic')
+      res.status(201).json({
+        message: 'Successfully updated device',
+        device_updated: device
+      });
 
+  }).catch(err => {
+    res.status(500).json({
+      message: 'Server error',
+      error: err
+    });
+  });
+})
 
 const logDeviceChange = (user, device , modifier) => {
     var newLog = new deviceRecord({
