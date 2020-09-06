@@ -117,7 +117,7 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
                textMail = device + "[" + device_name + "]" + " is now inside geofence  " + area.name;
 
                Area.findByIdAndUpdate(area._id, {$push: {devices: device}}).then(r  => console.log('ADDING' + r.devices));
-               notifyCompany(company, textMail);
+               notifyCompany(company, textMail, device);
 
                new History({
                  _id: mongoose.Types.ObjectId(),
@@ -137,7 +137,7 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
                textMail = device + "[" + device_name + "]" + " is now outside geofence  " + area.name;
 
                Area.findByIdAndUpdate(area._id, {$pull: {devices: device}}).then(r  => console.log('REMOVING' + r.devices));
-               notifyCompany(company, textMail);
+               notifyCompany(company, textMail, device);
 
                new History({
                  _id: mongoose.Types.ObjectId(),
@@ -156,23 +156,21 @@ function isInsideGeofence(device, device_name ,company, lat, lng) {
   })
   .catch(err => {console.log(err)});
 }
-function notifyCompany(company, textMail) {
+function notifyCompany(company, textMail, device) {
 
-  User.find({company: company}).then( users => {
-    users.forEach( user => {
-      var mail = {
-        from: "notifications@gloksystems.co.uk",
-        to: user.email,
-        subject: "GLOK area update",
-        text: textMail
-      }
+  if(device.notification.tracking.track && device.notification.tracking.email) {
+    const mail = {
+      from: "notifications@gloksystems.co.uk",
+      to: device.notification.tracking.email,
+      subject: "GLOK area update",
+      text: textMail
+    }
 
-      conf.mailTransporter.sendMail(mail, (err, info) => {
-        if(err)
-          console.log(err)
+    conf.mailTransporter.sendMail(mail, (err, info) => {
+      if(err)
+        console.log(err)
     });
-    })
-  })
+  }
 }
 
 router.get('/', methods.ensureToken ,function(req, res, next) {

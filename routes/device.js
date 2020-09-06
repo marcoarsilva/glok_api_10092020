@@ -170,7 +170,7 @@ router.delete('/:id', methods.ensureToken ,function(req, res, next) {
   });
 router.put('/tracking/:id', methods.ensureToken, function(req, res, next) {
   const id = req.params.id;
-  
+
   Device.findByIdAndUpdate( id, {notifications: {tracking: req.body.tracking} })
     .then( device => {
       logDeviceChange(req.payload.user._id, device._id, 'generic')
