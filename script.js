@@ -9,7 +9,7 @@ var Device = require('./models/device')
 mongoose.connect(conf.mongodb, {useNewUrlParser: true});
 
 
-var downForAWeekChecker = schedule.scheduleJob('12 * * *', function(){
+schedule.scheduleJob('12 * * *', function(){
     Device.find({}).then( devices => {
         devices.forEach(device => {
          var now = Date.now();
@@ -21,7 +21,7 @@ var downForAWeekChecker = schedule.scheduleJob('12 * * *', function(){
          console.log( device.device +  ">" + diffDays);
 
          if(diffDays > 1){
-             notifyCompany(device.company, "Device " + device.name + "is down for more than  1 day");
+             notifyCompany(device.company, "Device " + device.name + "is down for more than  1 day" , device);
              Device.findByIdAndUpdate(device.id, {notifications:{deviceDown: true}});
          } else {
             Device.findByIdAndUpdate(device.id, {notifications:{deviceDown: false}});
@@ -31,23 +31,20 @@ var downForAWeekChecker = schedule.scheduleJob('12 * * *', function(){
 })
 
 
- function notifyCompany(company, textMail) {
+ function notifyCompany(company, textMail, device) {
 
-    User.find({company: company}).then( users => {
-      users.forEach( user => {
-        var mail = {
-          from: "notifications@gloksystems.co.uk",
-          to: user.email,
-          subject: "GLOK update",
-          text: textMail
-        }
+   const mail = {
+     from: "notifications@gloksystems.co.uk",
+     to: device.notification.tracking.email,
+     subject: "GLOK update",
+     text: textMail
+   }
 
-        conf.mailTransporter.sendMail(mail, (err, info) => {
-          if(err)
-            console.log(err)
-          else
-            console.log(info);
-      });
-      })
-    })
+   conf.mailTransporter.sendMail(mail, (err, info) => {
+     if(err)
+       console.log(err)
+     else
+       console.log(info);
+   });
 }
+

@@ -3,17 +3,17 @@ const mongoCon = 'mongodb://glokdb:IBX74bRtS79gAYIzHvmU3mMqtlBzZmiTTsHs9IheeP9Uj
 //const mongoCon = 'mongodb://localhost/glok';
 
 const transporter = nodemailer.createTransport({
-    pool: true,
-    host: 'gloksystems.co.uk',
-    port: 465,
-    secure: true,
+    host: 'smtp.office365.com',
+    port: 587,
     auth: {
-        user: 'notifications@gloksystems.co.uk',
-        pass: 'YUW1sQjUTo*d'
+        user: 'nofitications@gloksystems.co.uk',
+        pass: 'haWfur-kombe9-qeqfoz'
     },
+    secure: false,
+    requireTLS: true,
     tls: {
-      // do not fail on invalid certs
-      rejectUnauthorized: false
+        ciphers: 'SSLv3'
+        // rejectUnauthorized: false
     }
 });
 
